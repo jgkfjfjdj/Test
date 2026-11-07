@@ -43,7 +43,7 @@ export const meRoutes: FastifyPluginAsyncTypebox = async (app) => {
   app.addHook('preHandler', requirePlayer);
 
   app.get(
-    '/',
+    '',
     {
       schema: {
         tags: ['me'],
@@ -56,7 +56,7 @@ export const meRoutes: FastifyPluginAsyncTypebox = async (app) => {
   );
 
   app.patch(
-    '/',
+    '',
     {
       schema: {
         tags: ['me'],
@@ -74,7 +74,7 @@ export const meRoutes: FastifyPluginAsyncTypebox = async (app) => {
   );
 
   app.delete(
-    '/',
+    '',
     {
       schema: {
         tags: ['me'],

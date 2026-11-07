@@ -75,6 +75,8 @@ export interface Harness {
   clock: TestClock;
   keys: { access: KeyRing; tickets: KeyRing };
   inject(options: InjectOptions): Promise<LightMyRequestResponse>;
+  /** Another API instance on the same database, Redis and keys (multi-instance tests). */
+  peer(): Promise<FastifyInstance>;
   close(): Promise<void>;
 }
 
@@ -126,27 +128,31 @@ export async function createHarness(
     tickets: (await KeyRing.fromEnv('kindling-tickets', undefined)).ring,
   };
 
-  const app = await buildApp({
-    config,
-    logger: false,
-    deps: {
-      db,
-      redis,
-      mailer,
-      keys,
-      apple: apple.verifier(),
-      breachChecker: options.breachChecker ?? noBreachCheck,
-      now: clock.now,
-      probes: {
-        postgres: { ping: async () => void (await db.sql`SELECT 1`) },
-        redis: { ping: async () => void (await redis.ping()) },
+  const instance = async (instanceDb: DbHandle, instanceRedis: typeof redis) =>
+    buildApp({
+      config,
+      logger: false,
+      deps: {
+        db: instanceDb,
+        redis: instanceRedis,
+        mailer,
+        keys,
+        apple: apple.verifier(),
+        breachChecker: options.breachChecker ?? noBreachCheck,
+        now: clock.now,
+        probes: {
+          postgres: { ping: async () => void (await instanceDb.sql`SELECT 1`) },
+          redis: { ping: async () => void (await instanceRedis.ping()) },
+        },
+        close: async () => {
+          await Promise.allSettled([instanceDb.close(1), instanceRedis.quit()]);
+        },
       },
-      close: async () => {
-        await Promise.allSettled([db.close(1), redis.quit()]);
-      },
-    },
-  });
+    });
+
+  const app = await instance(db, redis);
   await app.ready();
+  const peers: FastifyInstance[] = [];
 
   return {
     app,
@@ -157,7 +163,18 @@ export async function createHarness(
     clock,
     keys,
     inject: (opts) => app.inject(opts),
-    close: () => app.close(),
+    peer: async () => {
+      const peerRedis = createRedis(config.REDIS_URL);
+      await peerRedis.connect();
+      const peerApp = await instance(createDb({ url: config.DATABASE_URL, maxConnections: 2 }), peerRedis);
+      await peerApp.ready();
+      peers.push(peerApp);
+      return peerApp;
+    },
+    close: async () => {
+      await Promise.all(peers.map((p) => p.close()));
+      await app.close();
+    },
   };
 }
 

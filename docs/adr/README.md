@@ -10,3 +10,4 @@ consequences. Supersede a record by adding a new one; never edit an accepted dec
 | [0003](0003-backend-node-fastify.md) | Node.js + TypeScript + Fastify modular monolith | Accepted 2026-11-07 |
 | [0004](0004-world-persistence-sqlite.md) | SQLite world database per game server | Accepted 2026-11-07 |
 | [0005](0005-integration-tests-real-services.md) | Integration tests run against real PostgreSQL/Redis services | Accepted 2026-11-07 |
+| [0006](0006-m2-identity-and-trust-decisions.md) | Identity, session and trust decisions (M2) | Accepted 2026-11-07 |

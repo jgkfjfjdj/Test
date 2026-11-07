@@ -1423,7 +1423,7 @@
         }
       }
     },
-    "/v1/me/": {
+    "/v1/me": {
       "get": {
         "summary": "The signed-in account and profile.",
         "tags": [
@@ -2004,6 +2004,674 @@
                     "updatedAt": {
                       "type": "string",
                       "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/servers": {
+      "get": {
+        "summary": "Server browser: online, listed servers. Send X-Protocol to hide incompatible servers.",
+        "tags": [
+          "servers"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 32
+            },
+            "in": "query",
+            "name": "region",
+            "required": false
+          },
+          {
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "pvp"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "pve"
+                  ]
+                }
+              ]
+            },
+            "in": "query",
+            "name": "mode",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "boolean"
+            },
+            "in": "query",
+            "name": "official",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "boolean"
+            },
+            "in": "query",
+            "name": "notFull",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "boolean"
+            },
+            "in": "query",
+            "name": "hasPlayers",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "boolean"
+            },
+            "in": "query",
+            "name": "noPassword",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "in": "query",
+            "name": "search",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "boolean"
+            },
+            "in": "query",
+            "name": "includeIncompatible",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 32
+            },
+            "in": "query",
+            "name": "cursor",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false
+          }
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "items",
+                    "nextCursor",
+                    "total"
+                  ],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "region",
+                          "kind",
+                          "verified",
+                          "mode",
+                          "tags",
+                          "mapId",
+                          "players",
+                          "maxPlayers",
+                          "queue",
+                          "passwordProtected",
+                          "protocolVersion",
+                          "compatible",
+                          "host",
+                          "gamePort",
+                          "queryPort",
+                          "lastWipeAt",
+                          "nextWipeAt"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "region": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "verified": {
+                            "type": "boolean"
+                          },
+                          "mode": {
+                            "type": "string"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "mapId": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "players": {
+                            "type": "integer"
+                          },
+                          "maxPlayers": {
+                            "type": "integer"
+                          },
+                          "queue": {
+                            "type": "integer"
+                          },
+                          "passwordProtected": {
+                            "type": "boolean"
+                          },
+                          "protocolVersion": {
+                            "type": "integer"
+                          },
+                          "compatible": {
+                            "type": "boolean"
+                          },
+                          "host": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "gamePort": {
+                            "anyOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "queryPort": {
+                            "anyOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "lastWipeAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "nextWipeAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "nextCursor": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "total": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/servers/{id}": {
+      "get": {
+        "summary": "Server details (rules summary, live population).",
+        "tags": [
+          "servers"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F-]{36}$"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "region",
+                    "kind",
+                    "verified",
+                    "mode",
+                    "tags",
+                    "mapId",
+                    "configSummary",
+                    "passwordProtected",
+                    "online",
+                    "live"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "region": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "verified": {
+                      "type": "boolean"
+                    },
+                    "mode": {
+                      "type": "string"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "mapId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "configSummary": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "passwordProtected": {
+                      "type": "boolean"
+                    },
+                    "online": {
+                      "type": "boolean"
+                    },
+                    "live": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "name",
+                            "region",
+                            "kind",
+                            "verified",
+                            "mode",
+                            "tags",
+                            "mapId",
+                            "players",
+                            "maxPlayers",
+                            "queue",
+                            "passwordProtected",
+                            "protocolVersion",
+                            "compatible",
+                            "host",
+                            "gamePort",
+                            "queryPort",
+                            "lastWipeAt",
+                            "nextWipeAt"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "region": {
+                              "type": "string"
+                            },
+                            "kind": {
+                              "type": "string"
+                            },
+                            "verified": {
+                              "type": "boolean"
+                            },
+                            "mode": {
+                              "type": "string"
+                            },
+                            "tags": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "mapId": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "players": {
+                              "type": "integer"
+                            },
+                            "maxPlayers": {
+                              "type": "integer"
+                            },
+                            "queue": {
+                              "type": "integer"
+                            },
+                            "passwordProtected": {
+                              "type": "boolean"
+                            },
+                            "protocolVersion": {
+                              "type": "integer"
+                            },
+                            "compatible": {
+                              "type": "boolean"
+                            },
+                            "host": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "gamePort": {
+                              "anyOf": [
+                                {
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "queryPort": {
+                              "anyOf": [
+                                {
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "lastWipeAt": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "nextWipeAt": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/servers/{id}/join": {
+      "post": {
+        "summary": "Reserve a slot (60 s) and get a single-use join ticket to present to the game server.",
+        "tags": [
+          "servers"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "maxLength": 128
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F-]{36}$"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ticket",
+                    "expiresAt",
+                    "server",
+                    "reservation"
+                  ],
+                  "properties": {
+                    "ticket": {
+                      "type": "string"
+                    },
+                    "expiresAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "server": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "host",
+                        "gamePort",
+                        "protocolVersion"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "host": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "gamePort": {
+                          "anyOf": [
+                            {
+                              "type": "integer"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "protocolVersion": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "reservation": {
+                      "type": "object",
+                      "required": [
+                        "expiresInSeconds",
+                        "reservedSlots"
+                      ],
+                      "properties": {
+                        "expiresInSeconds": {
+                          "type": "integer"
+                        },
+                        "reservedSlots": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/server/v1/jwks": {
+      "get": {
+        "summary": "Public keys for verifying join tickets (EdDSA / Ed25519).",
+        "tags": [
+          "server-link"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "issuer",
+                    "keys"
+                  ],
+                  "properties": {
+                    "issuer": {
+                      "type": "string"
+                    },
+                    "keys": {
+                      "type": "array",
+                      "items": {}
                     }
                   }
                 }
@@ -3882,6 +4550,717 @@
         "responses": {
           "204": {
             "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/admin/v1/servers": {
+      "get": {
+        "summary": "All registered servers with live state.",
+        "tags": [
+          "admin"
+        ],
+        "security": [
+          {
+            "staffSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "items"
+                  ],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "kind",
+                          "name",
+                          "region",
+                          "listing",
+                          "mode",
+                          "maxPlayers",
+                          "host",
+                          "buildVersion",
+                          "protocolVersion",
+                          "lastSeenAt",
+                          "online",
+                          "live"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "region": {
+                            "type": "string"
+                          },
+                          "listing": {
+                            "type": "string"
+                          },
+                          "mode": {
+                            "type": "string"
+                          },
+                          "maxPlayers": {
+                            "type": "integer"
+                          },
+                          "host": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "buildVersion": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "protocolVersion": {
+                            "anyOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "lastSeenAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "online": {
+                            "type": "boolean"
+                          },
+                          "live": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "additionalProperties": {}
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Register an official server. The server token is returned once — put it in the server config.",
+        "tags": [
+          "admin"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "region",
+                  "maxPlayers",
+                  "mode",
+                  "tags",
+                  "reason"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 64
+                  },
+                  "region": {
+                    "type": "string",
+                    "pattern": "^[a-z]{2,8}(-[a-z0-9]{2,12})*$",
+                    "maxLength": 32
+                  },
+                  "maxPlayers": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 200
+                  },
+                  "mode": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "pvp"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "pve"
+                        ]
+                      }
+                    ]
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 24
+                    },
+                    "maxItems": 12
+                  },
+                  "listing": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "unlisted"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "listed"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "verified"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "delisted"
+                        ]
+                      }
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 500,
+                    "description": "Stored in the audit log."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "staffSession": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "server",
+                    "token"
+                  ],
+                  "properties": {
+                    "server": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "kind",
+                        "name",
+                        "region",
+                        "listing",
+                        "mode",
+                        "maxPlayers",
+                        "host",
+                        "buildVersion",
+                        "protocolVersion",
+                        "lastSeenAt",
+                        "online",
+                        "live"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "region": {
+                          "type": "string"
+                        },
+                        "listing": {
+                          "type": "string"
+                        },
+                        "mode": {
+                          "type": "string"
+                        },
+                        "maxPlayers": {
+                          "type": "integer"
+                        },
+                        "host": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "buildVersion": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "protocolVersion": {
+                          "anyOf": [
+                            {
+                              "type": "integer"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "lastSeenAt": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "online": {
+                          "type": "boolean"
+                        },
+                        "live": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/v1/servers/{id}": {
+      "patch": {
+        "summary": "Rename, move region, or change listing (delist / verify).",
+        "tags": [
+          "admin"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "reason"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 64
+                  },
+                  "region": {
+                    "type": "string",
+                    "pattern": "^[a-z]{2,8}(-[a-z0-9]{2,12})*$",
+                    "maxLength": 32
+                  },
+                  "listing": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "unlisted"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "listed"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "verified"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "delisted"
+                        ]
+                      }
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 500,
+                    "description": "Stored in the audit log."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F-]{36}$"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "staffSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "kind",
+                    "name",
+                    "region",
+                    "listing",
+                    "mode",
+                    "maxPlayers",
+                    "host",
+                    "buildVersion",
+                    "protocolVersion",
+                    "lastSeenAt",
+                    "online",
+                    "live"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "region": {
+                      "type": "string"
+                    },
+                    "listing": {
+                      "type": "string"
+                    },
+                    "mode": {
+                      "type": "string"
+                    },
+                    "maxPlayers": {
+                      "type": "integer"
+                    },
+                    "host": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "buildVersion": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "protocolVersion": {
+                      "anyOf": [
+                        {
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "lastSeenAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "online": {
+                      "type": "boolean"
+                    },
+                    "live": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "additionalProperties": {}
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/v1/servers/{id}/token/rotate": {
+      "post": {
+        "summary": "Revoke the server token and issue a new one (the current link is disconnected).",
+        "tags": [
+          "admin"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "reason"
+                ],
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 500,
+                    "description": "Stored in the audit log."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F-]{36}$"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "staffSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "token"
+                  ],
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/v1/servers/{id}/commands": {
+      "post": {
+        "summary": "Send a command to a connected server and wait for its answer (10 s timeout).",
+        "tags": [
+          "admin"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "args",
+                  "reason"
+                ],
+                "properties": {
+                  "name": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "broadcast"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "kick"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "save"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "restart"
+                        ]
+                      }
+                    ]
+                  },
+                  "args": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 500,
+                    "description": "Stored in the audit log."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F-]{36}$"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "staffSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "result": {},
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }

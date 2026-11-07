@@ -59,10 +59,14 @@ services:
     profiles: ['api']
     image: kindling-api:dev
     environment:
+      # The image defaults to production mode, which requires real keys/secrets. This local stack runs
+      # in development mode (ephemeral signing keys, public dev secrets, http cookies).
+      NODE_ENV: development
       APP_ENV: local
       LOG_LEVEL: info
       DATABASE_URL: postgres://kindling:kindling@postgres:5432/kindling
       REDIS_URL: redis://redis:6379/0
+      ADMIN_COOKIE_SECURE: 'false'
     ports:
       - '127.0.0.1:8080:8080'
     depends_on:

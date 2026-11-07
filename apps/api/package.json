@@ -13,7 +13,9 @@
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "openapi": "tsx scripts/export-openapi.ts",
     "staff:invite": "tsx --env-file-if-exists=../../.env scripts/staff-invite.ts",
-    "accounts:purge": "tsx --env-file-if-exists=../../.env scripts/purge-accounts.ts"
+    "accounts:purge": "tsx --env-file-if-exists=../../.env scripts/purge-accounts.ts",
+    "fake-server": "tsx scripts/fake-game-server.ts",
+    "keys:generate": "tsx scripts/generate-keys.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^11.1.5",

@@ -4,9 +4,11 @@ An original first-person multiplayer survival game for iPhone: gather, craft, bu
 persistent worlds. The game comes with a full ecosystem around it: authoritative dedicated servers,
 community-hosted servers, a backend platform and a web admin console.
 
-> **Status: Milestone 0 (foundations) implemented.** Monorepo, backend API skeleton, database
-> migrations, dev stack, CI, and the Unity project skeleton exist. **No gameplay yet** — that starts
-> in M1. Status and remaining steps: [`docs/milestones/M0.md`](docs/milestones/M0.md).
+> **Status:** M0 foundations done (Unity first-open pending). **M2 backend done**: accounts,
+> Sign in with Apple, sessions, cloud saves, bootstrap/version gate, staff console API with TOTP +
+> RBAC + audit log, server registry, server link, server browser and join tickets.
+> **No gameplay yet** — that starts in M1 on the Unity side.
+> Status: [`docs/milestones/M0.md`](docs/milestones/M0.md), [`docs/milestones/M2.md`](docs/milestones/M2.md).
 
 ## Quick start (backend)
 
@@ -17,7 +19,12 @@ cp .env.example .env
 pnpm db:migrate
 pnpm dev                 # http://localhost:8080/health/ready
 pnpm test                # unit tests
+pnpm --filter @kindling/api staff:invite -- --email you@studio.example --name You --role super_admin
+pnpm --filter @kindling/api fake-server -- --token <server token>   # stand-in game server
 ```
+
+API reference: [`docs/api/openapi.json`](docs/api/openapi.json). Protocols for game servers:
+[`docs/protocol/`](docs/protocol/).
 
 Unity project: see [`game/README.md`](game/README.md). Pure C# tests: `dotnet test sim/Kindling.Sim.Tests`.
 

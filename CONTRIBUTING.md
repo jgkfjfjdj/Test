@@ -25,7 +25,12 @@ pnpm lint && pnpm format:check && pnpm typecheck && pnpm test
 TEST_DATABASE_URL=postgres://kindling:kindling@localhost:5432/kindling_test \
 TEST_REDIS_URL=redis://localhost:6379/15 pnpm test:integration
 pnpm openapi                  # regenerate docs/api/openapi.json after API changes (CI checks it)
+pnpm --filter @kindling/api staff:invite -- --email you@studio.example --name You --role super_admin
+pnpm --filter @kindling/api fake-server -- --token kst_...   # stand-in game server for local testing
+pnpm --filter @kindling/api keys:generate                    # production keys/secrets (never commit)
 ```
+- Security-relevant decisions are recorded in ADRs (see ADR 0006 for auth/session/trust).
+- Staff mutations must be audited (`AuditService.recordStaff`, same transaction) and take a `reason`.
 - Strict TypeScript, ESM, `import type` for types, no `console` in services (use the request logger).
 - Route schemas use TypeBox; errors use `ProblemError` with a code from `@kindling/contracts`.
 

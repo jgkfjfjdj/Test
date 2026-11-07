@@ -35,6 +35,8 @@ export const ConfigSchema = Type.Object({
   ACCESS_TOKEN_TTL_SECONDS: Type.Integer({ minimum: 60, maximum: 3600, default: 900 }),
   REFRESH_TOKEN_TTL_DAYS: Type.Integer({ minimum: 1, maximum: 365, default: 60 }),
   JOIN_TICKET_TTL_SECONDS: Type.Integer({ minimum: 10, maximum: 300, default: 60 }),
+  /** How long an admin command waits for the game server's answer. */
+  SERVER_COMMAND_TIMEOUT_MS: Type.Integer({ minimum: 100, maximum: 60_000, default: 10_000 }),
 
   // --- Secrets (required in production; development uses fixed, clearly insecure defaults).
   /** HMAC key for hashing IP addresses before storage (base64, ≥ 32 bytes). */

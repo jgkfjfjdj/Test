@@ -12,6 +12,8 @@ import { AuditService } from '../src/modules/audit/service.js';
 import { StaffService } from '../src/modules/staff/service.js';
 
 const { values } = parseArgs({
+  // pnpm forwards a literal '--' separator; drop it so both `pnpm x -- --flag` and `pnpm x --flag` work.
+  args: process.argv.slice(2).filter((arg) => arg !== '--'),
   options: {
     email: { type: 'string' },
     name: { type: 'string' },
