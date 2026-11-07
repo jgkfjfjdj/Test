@@ -63,7 +63,7 @@ plugin (open source).
 ## 5. Backend and web dependencies (installed by `pnpm install`)
 
 Fastify and plugins, TypeBox, Drizzle ORM + drizzle-kit, postgres (driver), ioredis, BullMQ, jose,
-argon2, pino, prom-client, @sentry/node, App Store Server Library, Vitest, Testcontainers, ESLint,
+argon2, pino, prom-client, @sentry/node, App Store Server Library, Vitest, ESLint,
 Prettier, TypeScript. Web: React, Vite, TanStack Router/Query, Tailwind CSS, shadcn/ui (Radix),
 ECharts, React Hook Form, Playwright.
 

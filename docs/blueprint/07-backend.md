@@ -22,7 +22,7 @@ apps/api/src/modules/<module>/
   repository.ts    Drizzle queries
   events.ts        domain events emitted/consumed
   permissions.ts   (admin modules) required permissions per route
-  *.test.ts        unit + integration tests (Testcontainers)
+  *.test.ts        unit tests; *.integration.test.ts run against real PostgreSQL/Redis (ADR 0005)
 ```
 
 | Module | Responsibilities |

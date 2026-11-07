@@ -1,0 +1,34 @@
+{
+  "name": "kindling",
+  "private": true,
+  "description": "KINDLING — iPhone multiplayer survival game monorepo (backend, tools, web).",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r --parallel typecheck",
+    "test": "pnpm -r test",
+    "test:integration": "pnpm -r test:integration",
+    "build": "pnpm -r build",
+    "dev": "pnpm --filter @kindling/api dev",
+    "db:migrate": "pnpm --filter @kindling/db migrate",
+    "openapi": "pnpm --filter @kindling/api openapi",
+    "infra:up": "docker compose -f infra/compose/docker-compose.dev.yml up -d",
+    "infra:down": "docker compose -f infra/compose/docker-compose.dev.yml down"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.0",
+    "@types/node": "^24.0.0",
+    "eslint": "^10.0.0",
+    "eslint-config-prettier": "^10.1.0",
+    "globals": "^17.0.0",
+    "prettier": "^3.6.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.72.0"
+  }
+}

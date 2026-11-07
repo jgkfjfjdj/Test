@@ -1,0 +1,38 @@
+name: ci-sim
+
+on:
+  push:
+    paths:
+      [
+        'game/Assets/Kindling/Runtime/**',
+        'game/Assets/Kindling/Tests/**',
+        'sim/**',
+        '.github/workflows/ci-sim.yml',
+      ]
+  pull_request:
+    paths:
+      [
+        'game/Assets/Kindling/Runtime/**',
+        'game/Assets/Kindling/Tests/**',
+        'sim/**',
+        '.github/workflows/ci-sim.yml',
+      ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: pure C# tests (dotnet, no Unity)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - run: dotnet test sim/Kindling.Sim.Tests --configuration Release --logger "console;verbosity=normal"

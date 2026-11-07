@@ -4,9 +4,22 @@ An original first-person multiplayer survival game for iPhone: gather, craft, bu
 persistent worlds. The game comes with a full ecosystem around it: authoritative dedicated servers,
 community-hosted servers, a backend platform and a web admin console.
 
-> **Status: blueprint phase.** This repository holds only the technical blueprint so far.
-> There is **no game, server, backend or admin code yet**. Implementation starts with
-> Milestone 0 once the blueprint is approved.
+> **Status: Milestone 0 (foundations) implemented.** Monorepo, backend API skeleton, database
+> migrations, dev stack, CI, and the Unity project skeleton exist. **No gameplay yet** — that starts
+> in M1. Status and remaining steps: [`docs/milestones/M0.md`](docs/milestones/M0.md).
+
+## Quick start (backend)
+
+```bash
+pnpm install
+pnpm infra:up            # PostgreSQL 17 + Redis 7.4 in Docker
+cp .env.example .env
+pnpm db:migrate
+pnpm dev                 # http://localhost:8080/health/ready
+pnpm test                # unit tests
+```
+
+Unity project: see [`game/README.md`](game/README.md). Pure C# tests: `dotnet test sim/Kindling.Sim.Tests`.
 
 **Start here → [`docs/blueprint/README.md`](docs/blueprint/README.md)**
 

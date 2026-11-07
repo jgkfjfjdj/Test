@@ -1,0 +1,10 @@
+**/node_modules
+**/dist
+**/coverage
+.git
+game
+sim
+docs
+infra
+.env
+.env.*

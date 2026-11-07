@@ -1,0 +1,83 @@
+name: ci-ts
+
+on:
+  push:
+    paths-ignore: ['game/**', 'sim/**', 'docs/blueprint/**']
+  pull_request:
+    paths-ignore: ['game/**', 'sim/**', 'docs/blueprint/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-ts-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: lint, typecheck, tests, OpenAPI, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: kindling
+          POSTGRES_PASSWORD: kindling
+          POSTGRES_DB: kindling_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U kindling -d kindling_test"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+      redis:
+        image: redis:7.4-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgres://kindling:kindling@localhost:5432/kindling_test
+      TEST_REDIS_URL: redis://localhost:6379/15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm test:integration
+      - name: OpenAPI document is up to date
+        run: |
+          pnpm openapi
+          git diff --exit-code docs/api/openapi.json || {
+            echo "::error::docs/api/openapi.json is stale. Run 'pnpm openapi' and commit the result."; exit 1; }
+      - run: pnpm build
+
+  docker:
+    name: API container image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: >
+          docker build -f infra/docker/api.Dockerfile
+          --build-arg BUILD_COMMIT=${GITHUB_SHA::7}
+          -t kindling-api:ci .
+      - name: Smoke test (migrations + readiness)
+        run: |
+          docker network create kci
+          docker run -d --name pg --network kci -e POSTGRES_USER=kindling -e POSTGRES_PASSWORD=kindling -e POSTGRES_DB=kindling postgres:17-alpine
+          docker run -d --name redis --network kci redis:7.4-alpine
+          for i in $(seq 1 30); do docker exec pg pg_isready -U kindling -d kindling && break; sleep 1; done
+          docker run --rm --network kci -e DATABASE_URL=postgres://kindling:kindling@pg:5432/kindling kindling-api:ci node dist/migrate.js
+          docker run -d --name api --network kci -p 8080:8080 \
+            -e DATABASE_URL=postgres://kindling:kindling@pg:5432/kindling -e REDIS_URL=redis://redis:6379/0 kindling-api:ci
+          for i in $(seq 1 30); do curl -fsS localhost:8080/health/ready && exit 0; sleep 1; done
+          docker logs api; exit 1

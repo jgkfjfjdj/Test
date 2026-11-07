@@ -1,0 +1,27 @@
+{
+    "name": "Kindling.Editor.Rendering",
+    "rootNamespace": "Kindling.Editor.Rendering",
+    "references": [
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.RenderPipelines.Universal.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "KINDLING_URP"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.render-pipelines.universal",
+            "expression": "17.0.0",
+            "define": "KINDLING_URP"
+        }
+    ],
+    "noEngineReferences": false
+}

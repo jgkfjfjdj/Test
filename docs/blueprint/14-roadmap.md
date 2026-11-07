@@ -39,8 +39,8 @@ M3–M9, which can run in parallel.
 ### M0 — Foundations and toolchain (2 weeks)
 **Deliverables**
 - Monorepo skeleton per [12](12-folder-structure.md): pnpm workspace, TS configs, lint/format, `.gitattributes` (LFS), `.gitignore`, CONTRIBUTING, ADRs 0001–0004 (engine, netcode, backend, persistence).
-- Docker Compose dev stack (PostgreSQL, Redis). `apps/api` with config loading, structured logging, `/health`, error handling, OpenAPI generation; `packages/db` with Drizzle and a first migration; Vitest + Testcontainers wired up.
-- Unity: `game/` with `Packages/manifest.json`, the asmdef layout, Boot scene, URP tier assets, an editor bootstrap script (you open the project once in Unity 6 LTS to generate `ProjectSettings`, then commit it). FishNet vendored at a pinned version.
+- Docker Compose dev stack (PostgreSQL, Redis). `apps/api` with config loading, structured logging, `/health`, error handling, OpenAPI generation; `packages/db` with Drizzle and a first migration; Vitest unit + integration tests (real PostgreSQL/Redis).
+- Unity: `game/` with `Packages/manifest.json`, the asmdef layout, Boot scene, URP tier assets, an editor bootstrap script (you open the project once in Unity 6 LTS to generate `ProjectSettings`, then commit it). FishNet is vendored at the start of M1, where it is first used.
 - `sim/` .NET test project linked to the pure-C# sources.
 - CI: `ci-ts.yml`, `ci-sim.yml`, `ci-unity.yml` (GameCI, after the license secret is added).
 **Exit criteria:** `docker compose up` + `pnpm test` pass; the Unity project opens with no errors and builds an empty iOS app (on your Mac) and a Linux dedicated server; CI is green.

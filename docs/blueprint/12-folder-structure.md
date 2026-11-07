@@ -80,7 +80,7 @@ when its first real file is committed.
 │   │   │   │                       notifications/ analytics/ admin/ health/
 │   │   │   ├── ws/                 realtime gateway, server link hub, admin live
 │   │   │   └── lib/                crypto (jwt, argon2), redis, db, mailer, apns, apple
-│   │   ├── test/                   integration tests (Testcontainers)
+│   │   ├── test/                   unit + integration tests (real PostgreSQL/Redis, ADR 0005)
 │   │   └── Dockerfile
 │   ├── worker/                     ── BullMQ processors + schedules
 │   │   └── src/jobs/               email, push, analytics-rollup, stats-aggregate, account-purge,

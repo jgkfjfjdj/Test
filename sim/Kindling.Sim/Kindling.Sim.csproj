@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Compiles the engine-independent game code straight from the Unity project so it can be
+    tested with `dotnet test` (no Unity license needed). netstandard2.1 matches Unity's API
+    surface, so code that compiles here also compiles in Unity.
+    Only add folders whose asmdef has "noEngineReferences": true.
+  -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Kindling.Sim</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(GameRuntime)/Core/**/*.cs" />
+    <Compile Include="$(GameRuntime)/Content/**/*.cs" />
+  </ItemGroup>
+</Project>

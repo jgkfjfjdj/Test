@@ -82,7 +82,7 @@ because gameplay code talks to our own `Kindling.Net` interfaces, not straight t
 | Logging | `pino` (JSON) | → Loki |
 | Metrics / tracing | `prom-client`; OpenTelemetry (later) | → Prometheus/Grafana |
 | Errors | Sentry SDK | Also used in Unity and React |
-| Testing | **Vitest**; **Testcontainers** (real PostgreSQL/Redis in integration tests) | |
+| Testing | **Vitest**; integration tests against real PostgreSQL/Redis (Docker Compose locally, service containers in CI — see ADR 0005) | |
 | Apple integrations | App Store Server Library (Node); APNs over HTTP/2 with token auth; Sign in with Apple identity token verification (Apple JWKS) | |
 | Email | A transactional provider (Postmark, Amazon SES or Resend) behind an interface | |
 

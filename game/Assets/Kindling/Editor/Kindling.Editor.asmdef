@@ -1,0 +1,20 @@
+{
+    "name": "Kindling.Editor",
+    "rootNamespace": "Kindling.Editor",
+    "references": [
+        "Kindling.Core",
+        "Kindling.Content",
+        "Kindling.Gameplay"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <!-- Match Unity 6: C# 9, no nullable annotations, warnings are errors. -->
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+    <GameRuntime>$(MSBuildThisFileDirectory)../game/Assets/Kindling/Runtime</GameRuntime>
+    <GameTests>$(MSBuildThisFileDirectory)../game/Assets/Kindling/Tests</GameTests>
+  </PropertyGroup>
+</Project>

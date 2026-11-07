@@ -1,0 +1,21 @@
+{
+  "name": "@kindling/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared API schemas, error codes and types (TypeBox → JSON Schema / OpenAPI).",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --passWithNoTests",
+    "test:integration": "echo 'no integration tests in @kindling/contracts'"
+  },
+  "dependencies": {
+    "typebox": "^1.4.5"
+  },
+  "devDependencies": {
+    "vitest": "^5.1.0"
+  }
+}

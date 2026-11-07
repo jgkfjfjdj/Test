@@ -1,0 +1,34 @@
+{
+  "name": "@kindling/api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "KINDLING backend API: REST + WebSockets (Fastify).",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=../../.env src/main.ts",
+    "start": "node dist/main.js",
+    "build": "node build.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "openapi": "tsx scripts/export-openapi.ts"
+  },
+  "dependencies": {
+    "@fastify/swagger": "^9.9.3",
+    "@fastify/type-provider-typebox": "^6.3.0",
+    "@kindling/contracts": "workspace:*",
+    "@kindling/db": "workspace:*",
+    "drizzle-orm": "^0.45.4",
+    "fastify": "^5.12.8",
+    "ioredis": "^5.11.1",
+    "pino": "^10.4.0",
+    "postgres": "^3.4.9",
+    "typebox": "^1.4.5"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "pino-pretty": "^13.0.0",
+    "tsx": "^4.21.0",
+    "vitest": "^5.1.0"
+  }
+}
