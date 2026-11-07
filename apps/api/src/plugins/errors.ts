@@ -4,7 +4,7 @@ import { ProblemError } from '../lib/problem.js';
 
 const statusCodeMap: Record<number, { code: string; title: string }> = {
   400: { code: 'common.bad_request', title: 'Bad Request' },
-  401: { code: 'common.unauthorized', title: 'Unauthorized' },
+  401: { code: ErrorCodes.unauthorized, title: 'Unauthorized' },
   403: { code: 'common.forbidden', title: 'Forbidden' },
   404: { code: ErrorCodes.notFound, title: 'Not Found' },
   405: { code: 'common.method_not_allowed', title: 'Method Not Allowed' },
@@ -17,7 +17,7 @@ function send(reply: FastifyReply, request: FastifyRequest, problem: ProblemErro
   return reply
     .status(problem.status)
     .type(PROBLEM_CONTENT_TYPE)
-    .send(problem.toProblem(request.id, request.url));
+    .send(problem.toProblem(request.id, request.url.split('?')[0]));
 }
 
 /** Converts every error and 404 into RFC 9457 problem+json. Internal details are never leaked. */

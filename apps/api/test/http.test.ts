@@ -2,7 +2,7 @@ import { Type } from 'typebox';
 import { afterEach, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
 import { ProblemError } from '../src/lib/problem.js';
-import { buildTestApp } from './helpers.js';
+import { buildTestApp } from './support/unit.js';
 
 let app: FastifyInstance | undefined;
 afterEach(async () => {

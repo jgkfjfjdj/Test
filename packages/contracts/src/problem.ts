@@ -22,7 +22,8 @@ export const ProblemDetails = Type.Object(
       ),
     ),
   },
-  { $id: 'ProblemDetails', additionalProperties: false },
+  // RFC 9457 allows extension members (e.g. "current" on version conflicts).
+  { additionalProperties: true },
 );
 export type ProblemDetails = Static<typeof ProblemDetails>;
 

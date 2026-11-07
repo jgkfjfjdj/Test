@@ -1,11 +1,11 @@
 import { buildApp } from './app.js';
-import { ConfigError, loadConfig } from './config.js';
+import { ConfigError, loadConfig, type AppConfig } from './config.js';
 import { createRuntimeDeps } from './deps.js';
 
 const SHUTDOWN_TIMEOUT_MS = 10_000;
 
 async function main(): Promise<void> {
-  let config;
+  let config: AppConfig;
   try {
     config = loadConfig();
   } catch (err) {
@@ -17,9 +17,10 @@ async function main(): Promise<void> {
     throw err;
   }
 
-  const deps = createRuntimeDeps(config);
+  const deps = await createRuntimeDeps(config);
   const { redis } = deps;
   const app = await buildApp({ config, deps });
+  for (const warning of deps.warnings) app.log.warn(warning);
 
   // Redis connects in the background; readiness reports it until it is reachable.
   redis.connect().catch((err: unknown) => app.log.warn({ err }, 'redis not reachable yet; retrying'));

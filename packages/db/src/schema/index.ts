@@ -1,8 +1,10 @@
 /**
- * Drizzle schema root. Tables are added module by module as milestones implement them
- * (see docs/blueprint/08-database.md for the full target schema).
- *
- * M0 contains no application tables yet: the first migration only installs the
- * extensions every later migration relies on (citext, pg_trgm).
+ * Drizzle schema root (docs/blueprint/08-database.md). Tables are added module by module as
+ * milestones implement them.
  */
-export {};
+export * from './audit.js';
+export * from './identity.js';
+export * from './liveops.js';
+export * from './profiles.js';
+export * from './servers.js';
+export * from './staff.js';

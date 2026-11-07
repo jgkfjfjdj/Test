@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
-import { buildTestApp, failingProbe, hangingProbe } from './helpers.js';
+import { buildTestApp, failingProbe, hangingProbe } from './support/unit.js';
 
 let app: FastifyInstance | undefined;
 afterEach(async () => {

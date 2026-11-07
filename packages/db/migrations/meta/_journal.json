@@ -8,6 +8,20 @@
       "when": 1794017140824,
       "tag": "0000_extensions",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794018247130,
+      "tag": "0001_m2_platform_core",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794018261665,
+      "tag": "0002_m2_seed_roles_and_defaults",
+      "breakpoints": true
     }
   ]
 }
