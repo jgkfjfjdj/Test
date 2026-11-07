@@ -41,8 +41,10 @@ export const rejectingApple: AppleTokenVerifier = {
  * App for tests that don't touch PostgreSQL/Redis. The clients are created lazily and never connect
  * (postgres.js connects on first query; ioredis uses lazyConnect).
  */
-export async function buildTestApp(probes: Partial<AppDeps['probes']> = {}): Promise<FastifyInstance> {
-  const config = testConfig();
+export async function buildTestApp(
+  probes: Partial<AppDeps['probes']> = {},
+  config: AppConfig = testConfig(),
+): Promise<FastifyInstance> {
   const db = createDb({ url: config.DATABASE_URL, maxConnections: 1 });
   const redis = createRedis(config.REDIS_URL);
   return buildApp({

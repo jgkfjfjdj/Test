@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.7
-# KINDLING API + migration runner image. Build from the repository root:
+# KINDLING API + migration runner + staff console (served under /admin). Build from the repository root:
 #   docker build -f infra/docker/api.Dockerfile -t kindling-api .
 FROM node:24-slim AS base
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
@@ -11,9 +11,12 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
 COPY apps/api/package.json apps/api/
 COPY packages/contracts/package.json packages/contracts/
 COPY packages/db/package.json packages/db/
-RUN pnpm install --frozen-lockfile --filter @kindling/api...
+COPY apps/web/package.json apps/web/
+RUN pnpm install --frozen-lockfile --filter @kindling/api... --filter @kindling/web...
 COPY apps/api apps/api
+COPY apps/web apps/web
 COPY packages packages
+RUN pnpm --filter @kindling/web build
 ARG BUILD_VERSION=0.0.0-dev
 ARG BUILD_COMMIT=unknown
 RUN pnpm --filter @kindling/api build \
@@ -24,6 +27,7 @@ ARG BUILD_VERSION=0.0.0-dev
 ARG BUILD_COMMIT=unknown
 ENV NODE_ENV=production \
     MIGRATIONS_DIR=/app/migrations \
+    ADMIN_WEB_DIR=/app/web \
     BUILD_VERSION=${BUILD_VERSION} \
     BUILD_COMMIT=${BUILD_COMMIT}
 WORKDIR /app
@@ -31,6 +35,7 @@ COPY --from=build /out/node_modules ./node_modules
 COPY --from=build /out/package.json ./package.json
 COPY --from=build /repo/apps/api/dist ./dist
 COPY --from=build /repo/packages/db/migrations ./migrations
+COPY --from=build /repo/apps/web/dist ./web
 USER node
 EXPOSE 8080
 HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=3 \

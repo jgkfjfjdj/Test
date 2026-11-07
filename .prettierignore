@@ -7,3 +7,4 @@ sim
 docs
 packages/db/migrations
 *.md
+apps/web/src/api/schema.d.ts

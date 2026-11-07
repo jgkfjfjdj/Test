@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { adminLiveOpsRoutes } from './admin/liveops-routes.js';
+import { registerAdminWeb } from './admin-web/plugin.js';
 import { auditRoutes } from './audit/routes.js';
 import { accountPages } from './auth/pages.js';
 import { authRoutes } from './auth/routes.js';
@@ -55,4 +56,5 @@ export async function registerModules(app: FastifyInstance, options: ModuleOptio
     },
     { prefix: '/admin/v1' },
   );
+  await registerAdminWeb(app, app.ctx.config.ADMIN_WEB_DIR);
 }

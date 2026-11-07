@@ -6,7 +6,8 @@ community-hosted servers, a backend platform and a web admin console.
 
 > **Status:** M0 foundations done (Unity first-open pending). **M2 backend done**: accounts,
 > Sign in with Apple, sessions, cloud saves, bootstrap/version gate, staff console API with TOTP +
-> RBAC + audit log, server registry, server link, server browser and join tickets.
+> RBAC + audit log, server registry, server link, server browser and join tickets — plus the
+> **staff web console** (`apps/web`, served at `/admin/`).
 > **No gameplay yet** — that starts in M1 on the Unity side.
 > Status: [`docs/milestones/M0.md`](docs/milestones/M0.md), [`docs/milestones/M2.md`](docs/milestones/M2.md).
 

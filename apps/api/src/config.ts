@@ -53,6 +53,10 @@ export const ConfigSchema = Type.Object({
   SMTP_URL: Type.Optional(Type.String()),
   MAIL_FROM: Type.String({ default: 'KINDLING <no-reply@kindling.invalid>' }),
 
+  // --- Web console
+  /** Folder with the built staff console (apps/web/dist). Served under /admin/ when set. */
+  ADMIN_WEB_DIR: Type.Optional(Type.String()),
+
   // --- Web console sessions
   /** Secure cookies require HTTPS; set false only for local http development. */
   ADMIN_COOKIE_SECURE: Type.Boolean({ default: true }),

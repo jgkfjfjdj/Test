@@ -57,7 +57,58 @@ jobs:
           pnpm openapi
           git diff --exit-code docs/api/openapi.json || {
             echo "::error::docs/api/openapi.json is stale. Run 'pnpm openapi' and commit the result."; exit 1; }
+      - name: Console API types match the OpenAPI document
+        run: |
+          pnpm --filter @kindling/web api:types
+          git diff --exit-code apps/web/src/api/schema.d.ts || {
+            echo "::error::apps/web/src/api/schema.d.ts is stale. Run 'pnpm --filter @kindling/web api:types' and commit."; exit 1; }
       - run: pnpm build
+
+  web-e2e:
+    name: Staff console end-to-end (desktop + iPhone viewports)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: kindling
+          POSTGRES_PASSWORD: kindling
+          POSTGRES_DB: kindling_e2e
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U kindling -d kindling_e2e"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+      redis:
+        image: redis:7.4-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgres://kindling:kindling@localhost:5432/kindling_e2e
+      TEST_REDIS_URL: redis://localhost:6379/14
+      E2E_SCREENSHOT_DIR: e2e/screenshots
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @kindling/web build
+      - run: pnpm --filter @kindling/web exec playwright install --with-deps chromium
+      - run: pnpm --filter @kindling/web e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: console-e2e
+          path: |
+            apps/web/e2e/screenshots
+            apps/web/test-results
+            apps/web/playwright-report
+          retention-days: 7
 
   docker:
     name: API container image

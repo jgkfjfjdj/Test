@@ -50,3 +50,9 @@ game/Assets/StreamingAssets/aa*
 *.db-wal
 *.db-shm
 world-data/
+
+# --- Web console e2e outputs ---
+apps/web/e2e/.auth/
+apps/web/e2e/screenshots/
+apps/web/test-results/
+apps/web/playwright-report/

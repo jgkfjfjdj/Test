@@ -3,6 +3,7 @@ import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig(
@@ -15,6 +16,8 @@ export default defineConfig(
       'sim/**',
       'docs/**',
       'packages/db/migrations/**',
+      'apps/web/src/api/schema.d.ts',
+      'apps/web/dist/**',
     ],
   },
   js.configs.recommended,
@@ -28,6 +31,16 @@ export default defineConfig(
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       'no-console': 'error',
       eqeqeq: ['error', 'always'],
+    },
+  },
+  {
+    // Staff console (browser): React hook rules.
+    files: ['apps/web/src/**/*.{ts,tsx}'],
+    plugins: { 'react-hooks': reactHooks },
+    languageOptions: { globals: { ...globals.browser } },
+    rules: {
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'error',
     },
   },
   {

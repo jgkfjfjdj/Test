@@ -29,6 +29,9 @@ pnpm --filter @kindling/api staff:invite -- --email you@studio.example --name Yo
 pnpm --filter @kindling/api fake-server -- --token kst_...   # stand-in game server for local testing
 pnpm --filter @kindling/api keys:generate                    # production keys/secrets (never commit)
 ```
+- Staff console: `pnpm --filter @kindling/web dev` (http://localhost:5173/admin/), tests with
+  `pnpm --filter @kindling/web test` and `… e2e` (see apps/web/README.md). After API changes run
+  `pnpm openapi && pnpm --filter @kindling/web api:types`.
 - Security-relevant decisions are recorded in ADRs (see ADR 0006 for auth/session/trust).
 - Staff mutations must be audited (`AuditService.recordStaff`, same transaction) and take a `reason`.
 - Strict TypeScript, ESM, `import type` for types, no `console` in services (use the request logger).
