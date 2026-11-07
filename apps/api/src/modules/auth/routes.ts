@@ -2,6 +2,7 @@ import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import type { FastifyRequest } from 'fastify';
 import { Type } from 'typebox';
 import { rateLimit } from '../../lib/rate-limit.js';
+import { clientInfo } from '../liveops/service.js';
 import { playerOf, requirePlayer } from '../../plugins/player-auth.js';
 import {
   AcceptedResponse,
@@ -31,6 +32,12 @@ export const authRoutes: FastifyPluginAsyncTypebox = async (app) => {
   const { config } = app.ctx;
   const auth = new AuthService(app.ctx);
 
+  /** Sign-in style routes are closed during login/full maintenance and for unsupported builds. */
+  const signInGate = async (request: FastifyRequest) => {
+    await app.liveops.assertAvailable('login');
+    await app.liveops.assertSupportedBuild(clientInfo(request));
+  };
+
   app.post(
     '/register',
     {
@@ -40,6 +47,7 @@ export const authRoutes: FastifyPluginAsyncTypebox = async (app) => {
         body: RegisterBody,
         response: { 201: SessionResponse },
       },
+      preHandler: signInGate,
       config: rateLimit(config, 'register', 5, '1 hour'),
     },
     async (request, reply) => reply.status(201).send(await auth.register(request.body, sessionMeta(request))),
@@ -54,6 +62,7 @@ export const authRoutes: FastifyPluginAsyncTypebox = async (app) => {
         body: LoginBody,
         response: { 200: SessionResponse },
       },
+      preHandler: signInGate,
       config: rateLimit(config, 'login', 20, '1 minute'),
     },
     async (request) => auth.login(request.body, sessionMeta(request)),
@@ -69,6 +78,7 @@ export const authRoutes: FastifyPluginAsyncTypebox = async (app) => {
         body: AppleBody,
         response: { 200: SessionResponse, 201: SessionResponse },
       },
+      preHandler: signInGate,
       config: rateLimit(config, 'apple', 20, '1 minute'),
     },
     async (request, reply) => {
@@ -87,6 +97,7 @@ export const authRoutes: FastifyPluginAsyncTypebox = async (app) => {
         body: RefreshBody,
         response: { 200: RefreshResponse },
       },
+      preHandler: signInGate,
       config: rateLimit(config, 'refresh', 60, '1 minute'),
     },
     async (request) => {

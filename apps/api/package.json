@@ -11,7 +11,9 @@
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts",
-    "openapi": "tsx scripts/export-openapi.ts"
+    "openapi": "tsx scripts/export-openapi.ts",
+    "staff:invite": "tsx --env-file-if-exists=../../.env scripts/staff-invite.ts",
+    "accounts:purge": "tsx --env-file-if-exists=../../.env scripts/purge-accounts.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^11.1.5",
