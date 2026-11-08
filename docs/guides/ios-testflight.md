@@ -1,5 +1,8 @@
 # Getting KINDLING onto your iPhone (TestFlight) — no Mac required
 
+> **No paid Apple account?** There's a free route: an unsigned build you install with your own Apple
+> ID (re-install every 7 days) — [ios-sideload.md](ios-sideload.md).
+
 The repository can now build the iPhone app by itself on GitHub's machines:
 
 ```

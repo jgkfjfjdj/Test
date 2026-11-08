@@ -49,7 +49,9 @@ Play-testing guide: [`docs/guides/playtest.md`](docs/guides/playtest.md). Protoc
 
 **iPhone build:** the `ios-testflight` workflow builds the app on GitHub (Unity on Linux → signed `.ipa`
 on macOS → TestFlight) once your Apple and Unity accounts are connected —
-see [`docs/guides/ios-testflight.md`](docs/guides/ios-testflight.md).
+see [`docs/guides/ios-testflight.md`](docs/guides/ios-testflight.md). **Free option** (no paid Apple account, only
+your Unity license): the `ios-unsigned` workflow builds an `.ipa` you install with your own Apple ID —
+[`docs/guides/ios-sideload.md`](docs/guides/ios-sideload.md).
 
 **Start here → [`docs/blueprint/README.md`](docs/blueprint/README.md)**
 
