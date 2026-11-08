@@ -1,6 +1,6 @@
 # ADR 0002 — FishNet for netcode, behind our own `Kindling.Net` layer
 
-- **Status:** Accepted, subject to the M1 validation gate
+- **Status:** Superseded by [ADR 0007](0007-netcode-litenetlib-own-simulation.md) (2026-11-08)
 - **Details:** docs/blueprint/02-technology-stack.md §3, docs/blueprint/05-multiplayer-networking.md
 
 ## Context

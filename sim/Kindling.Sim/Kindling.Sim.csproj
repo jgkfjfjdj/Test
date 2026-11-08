@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!--
     Compiles the engine-independent game code straight from the Unity project so it can be
-    tested with `dotnet test` (no Unity license needed). netstandard2.1 matches Unity's API
-    surface, so code that compiles here also compiles in Unity.
+    tested with `dotnet test` and reused by the dev server and bots (no Unity license needed).
+    netstandard2.1 matches Unity's API surface, so code that compiles here also compiles in Unity.
     Only add folders whose asmdef has "noEngineReferences": true.
   -->
   <PropertyGroup>
@@ -13,5 +13,11 @@
   <ItemGroup>
     <Compile Include="$(GameRuntime)/Core/**/*.cs" />
     <Compile Include="$(GameRuntime)/Content/**/*.cs" />
+    <Compile Include="$(GameRuntime)/Simulation/**/*.cs" />
+    <Compile Include="$(GameRuntime)/Net/**/*.cs" />
+    <Compile Include="$(GameRuntime)/Controls/**/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../LiteNetLib/LiteNetLib.csproj" />
   </ItemGroup>
 </Project>

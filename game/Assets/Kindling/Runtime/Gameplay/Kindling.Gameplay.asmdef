@@ -3,7 +3,10 @@
     "rootNamespace": "Kindling.Gameplay",
     "references": [
         "Kindling.Core",
-        "Kindling.Content"
+        "Kindling.Content",
+        "Kindling.Simulation",
+        "Kindling.Net",
+        "Kindling.Controls"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

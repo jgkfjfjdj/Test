@@ -1,0 +1,18 @@
+{
+    "name": "Kindling.Net",
+    "rootNamespace": "Kindling.Net",
+    "references": [
+        "Kindling.Core",
+        "Kindling.Simulation",
+        "LiteNetLib"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

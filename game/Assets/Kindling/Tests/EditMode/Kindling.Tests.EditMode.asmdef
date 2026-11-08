@@ -5,7 +5,11 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Kindling.Core",
-        "Kindling.Content"
+        "Kindling.Content",
+        "Kindling.Simulation",
+        "Kindling.Net",
+        "Kindling.Controls",
+        "LiteNetLib"
     ],
     "includePlatforms": [
         "Editor"
