@@ -1,0 +1,21 @@
+// Gameplay tuning. Names match Kindling.Content.RulesDef fields (unknown names are errors).
+// Servers override gathering.multiplier, world.dayLengthMinutes and world.sleeperMode in their config.
+{
+  "survival": {
+    "maxHealth": 100, "hungerPerMinute": 1.5, "thirstPerMinute": 2.5, "sprintDrainMultiplier": 2,
+    "coldHungerMultiplier": 1.5, "hotThirstMultiplier": 1.5,
+    "healthRegenPerMinute": 3, "regenMinHunger": 20, "regenMinThirst": 20,
+    "starvationDamagePerMinute": 5, "dehydrationDamagePerMinute": 6, "coldDamagePerMinute": 4,
+    "bleedingDamagePerMinute": 6, "poisonDamagePerMinute": 4, "poisonSeconds": 30,
+    "wellFedThreshold": 90, "wellFedRegenBonusPerMinute": 3, "comfortRegenBonusPerMinute": 3,
+    "warmthChangePerMinute": 20, "comfortMin": -20, "comfortMax": 20
+  },
+  "temperature": { "dayWarmth": 5, "nightWarmth": -35 },
+  "death": {
+    "downedSeconds": 30, "respawnHealth": 60, "respawnHunger": 60, "respawnThirst": 60,
+    "starterKit": { "item.tool.rock": 1, "item.tool.torch": 1 }
+  },
+  "gathering": { "multiplier": 1, "sweetSpotRadius": 0.4, "sweetSpotBonus": 1.5, "handSwingSeconds": 1.2, "handReach": 2.2, "handYield": 4 },
+  "crafting": { "queueSize": 8, "stationRange": 3.5, "interactRange": 3 },
+  "world": { "dayLengthMinutes": 60, "nightFraction": 0.25, "droppedItemSeconds": 300, "sleeperMode": "protectedInClaim", "vanishAfterSeconds": 60 }
+}

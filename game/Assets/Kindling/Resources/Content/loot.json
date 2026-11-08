@@ -1,0 +1,22 @@
+// Loot tables: each roll picks one entry by weight, with an amount between min and max.
+{
+  "tables": [
+    { "key": "loot.barrel", "name": "Barrel", "rolls": [1, 2], "entries": [
+      { "item": "item.resource.salvage", "weight": 4, "min": 1, "max": 3 },
+      { "item": "item.component.cloth", "weight": 3, "min": 2, "max": 6 },
+      { "item": "item.food.canned_beans", "weight": 1 },
+      { "item": "item.food.canned_water", "weight": 1.5 },
+      { "item": "item.component.rope", "weight": 1 },
+      { "item": "item.medical.bandage", "weight": 1 } ] },
+    { "key": "loot.crate", "name": "Supply Crate", "rolls": [2, 4], "entries": [
+      { "item": "item.resource.salvage", "weight": 4, "min": 3, "max": 8 },
+      { "item": "item.resource.iron_bar", "weight": 2, "min": 2, "max": 6 },
+      { "item": "item.food.canned_beans", "weight": 2, "min": 1, "max": 2 },
+      { "item": "item.food.canned_water", "weight": 2, "min": 1, "max": 2 },
+      { "item": "item.medical.bandage", "weight": 2, "min": 1, "max": 2 },
+      { "item": "item.component.rope", "weight": 2, "min": 1, "max": 3 },
+      { "item": "item.clothing.fiber_shirt", "weight": 1 },
+      { "item": "item.tool.stone_pick", "weight": 1 },
+      { "item": "item.tool.stone_hatchet", "weight": 1 } ] }
+  ]
+}

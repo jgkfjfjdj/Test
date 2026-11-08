@@ -6,6 +6,8 @@ on:
       [
         'game/Assets/Kindling/Runtime/**',
         'game/Assets/Kindling/Tests/**',
+        'game/Assets/Kindling/Resources/**',
+        'packages/content/**',
         'sim/**',
         '.github/workflows/ci-sim.yml',
       ]
@@ -14,6 +16,8 @@ on:
       [
         'game/Assets/Kindling/Runtime/**',
         'game/Assets/Kindling/Tests/**',
+        'game/Assets/Kindling/Resources/**',
+        'packages/content/**',
         'sim/**',
         '.github/workflows/ci-sim.yml',
       ]
@@ -35,6 +39,8 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+      - name: Content is valid, lock file and export are current
+        run: dotnet run --project sim/Kindling.ContentTool --configuration Release -- check
       - run: dotnet test sim/Kindling.Sim.Tests --configuration Release --logger "console;verbosity=normal"
       - name: Build dev server and bots
         run: |

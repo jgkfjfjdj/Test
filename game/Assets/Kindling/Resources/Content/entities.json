@@ -1,0 +1,20 @@
+// World entity types. kind: deployable, lootContainer, breakable, droppedItem, body, sleeper.
+// processor: fuel (items with fuelSeconds) burns while lit and converts inputs; fuelByproduct is made per fuel item burned.
+{
+  "entities": [
+    { "key": "entity.campfire", "name": "Campfire", "kind": "deployable", "size": [1, 0.5, 1], "slots": 6, "station": "campfire", "heat": 40, "heatRadius": 4,
+      "processor": { "fuelByproduct": "item.resource.charcoal",
+        "conversions": [ { "input": "item.food.mushroom_raw", "output": "item.food.mushroom_cooked", "seconds": 8 } ] } },
+    { "key": "entity.crude_bench", "name": "Crude Bench", "kind": "deployable", "size": [1.6, 0.9, 0.8], "station": "crudeBench" },
+    { "key": "entity.smelter", "name": "Smelter", "kind": "deployable", "size": [1.2, 1.6, 1.2], "slots": 8, "station": "smelter", "heat": 20, "heatRadius": 2,
+      "processor": { "fuelByproduct": "item.resource.charcoal",
+        "conversions": [ { "input": "item.resource.iron_ore", "output": "item.resource.iron_bar", "seconds": 4 } ] } },
+    { "key": "entity.small_chest", "name": "Small Chest", "kind": "deployable", "size": [0.9, 0.6, 0.6], "slots": 12 },
+    { "key": "entity.bedroll", "name": "Bedroll", "kind": "deployable", "size": [0.9, 0.2, 2], "respawnPoint": true, "respawnCooldownSeconds": 300 },
+    { "key": "entity.loot_barrel", "name": "Barrel", "kind": "breakable", "size": [0.8, 1.1, 0.8], "health": 40, "loot": "loot.barrel", "refillSeconds": 600, "mapCount": 60 },
+    { "key": "entity.loot_crate", "name": "Supply Crate", "kind": "lootContainer", "size": [1.2, 0.8, 0.8], "slots": 8, "loot": "loot.crate", "refillSeconds": 900, "mapCount": 30 },
+    { "key": "entity.dropped_item", "name": "Dropped Item", "kind": "droppedItem", "size": [0.4, 0.3, 0.4], "decaySeconds": 300 },
+    { "key": "entity.body", "name": "Body", "kind": "body", "size": [0.6, 0.4, 1.8], "slots": 36, "decaySeconds": 600 },
+    { "key": "entity.sleeper", "name": "Sleeper", "kind": "sleeper", "size": [0.6, 0.4, 1.8] }
+  ]
+}

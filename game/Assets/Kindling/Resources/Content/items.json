@@ -1,0 +1,47 @@
+// Item definitions. Keys are permanent (saves and the backend use them); net ids live in content.lock.json.
+// Fields: key, name, category, stack, weight, condition (0 = no durability), slot + insulation (clothing),
+// fuelSeconds, deploys (entity key), tool { swingSeconds, reach, conditionPerHit, power { kind: { tier, yield } } },
+// consume { health, hunger, thirst, poisonChance, stopsBleeding, healOverTime, healSeconds }.
+{
+  "items": [
+    { "key": "item.resource.wood", "name": "Wood", "category": "resource", "stack": 1000, "weight": 0.05, "fuelSeconds": 3 },
+    { "key": "item.resource.stone", "name": "Stone", "category": "resource", "stack": 1000, "weight": 0.1 },
+    { "key": "item.resource.fiber", "name": "Plant Fiber", "category": "resource", "stack": 500, "weight": 0.02 },
+    { "key": "item.resource.iron_ore", "name": "Iron Ore", "category": "resource", "stack": 500, "weight": 0.2 },
+    { "key": "item.resource.iron_bar", "name": "Iron Bar", "category": "resource", "stack": 250, "weight": 0.25 },
+    { "key": "item.resource.charcoal", "name": "Charcoal", "category": "resource", "stack": 500, "weight": 0.02, "fuelSeconds": 6 },
+    { "key": "item.resource.resin", "name": "Resin", "category": "resource", "stack": 100, "weight": 0.02 },
+    { "key": "item.resource.salvage", "name": "Salvage", "category": "resource", "stack": 200, "weight": 0.1 },
+
+    { "key": "item.component.cloth", "name": "Cloth", "category": "component", "stack": 200, "weight": 0.05 },
+    { "key": "item.component.rope", "name": "Rope", "category": "component", "stack": 50, "weight": 0.1 },
+
+    { "key": "item.tool.rock", "name": "Rock", "category": "tool", "weight": 1,
+      "tool": { "swingSeconds": 1.1, "reach": 2.2, "conditionPerHit": 0, "power": { "wood": { "tier": 0, "yield": 6 }, "stone": { "tier": 0, "yield": 8 } } } },
+    { "key": "item.tool.torch", "name": "Torch", "category": "tool", "weight": 0.5 },
+    { "key": "item.tool.stone_hatchet", "name": "Stone Hatchet", "category": "tool", "weight": 1.2, "condition": 100,
+      "tool": { "swingSeconds": 0.9, "reach": 2.5, "conditionPerHit": 0.5, "power": { "wood": { "tier": 1, "yield": 16 }, "stone": { "tier": 0, "yield": 4 } } } },
+    { "key": "item.tool.stone_pick", "name": "Stone Pick", "category": "tool", "weight": 1.5, "condition": 100,
+      "tool": { "swingSeconds": 1.0, "reach": 2.5, "conditionPerHit": 0.5, "power": { "stone": { "tier": 1, "yield": 18 }, "ore": { "tier": 1, "yield": 8 }, "wood": { "tier": 0, "yield": 4 } } } },
+
+    { "key": "item.food.berries", "name": "Berries", "category": "food", "stack": 20, "weight": 0.05, "consume": { "hunger": 6, "thirst": 3 } },
+    { "key": "item.food.mushroom_raw", "name": "Raw Mushroom", "category": "food", "stack": 20, "weight": 0.05, "consume": { "hunger": 4, "poisonChance": 0.3 } },
+    { "key": "item.food.mushroom_cooked", "name": "Cooked Mushroom", "category": "food", "stack": 20, "weight": 0.05, "consume": { "hunger": 14, "health": 3 } },
+    { "key": "item.food.canned_beans", "name": "Canned Beans", "category": "food", "stack": 10, "weight": 0.3, "consume": { "hunger": 30, "thirst": -2 } },
+    { "key": "item.food.canned_water", "name": "Canned Water", "category": "food", "stack": 10, "weight": 0.4, "consume": { "thirst": 35 } },
+
+    { "key": "item.medical.bandage", "name": "Bandage", "category": "medical", "stack": 10, "weight": 0.05,
+      "consume": { "stopsBleeding": true, "healOverTime": 15, "healSeconds": 10 } },
+
+    { "key": "item.clothing.fiber_hood", "name": "Fiber Hood", "category": "clothing", "slot": "head", "insulation": 6, "condition": 60, "weight": 0.2 },
+    { "key": "item.clothing.fiber_shirt", "name": "Fiber Shirt", "category": "clothing", "slot": "chest", "insulation": 12, "condition": 60, "weight": 0.4 },
+    { "key": "item.clothing.fiber_pants", "name": "Fiber Pants", "category": "clothing", "slot": "legs", "insulation": 10, "condition": 60, "weight": 0.4 },
+    { "key": "item.clothing.fiber_wraps", "name": "Fiber Foot Wraps", "category": "clothing", "slot": "feet", "insulation": 5, "condition": 60, "weight": 0.2 },
+
+    { "key": "item.deployable.campfire", "name": "Campfire", "category": "deployable", "weight": 2, "deploys": "entity.campfire" },
+    { "key": "item.deployable.crude_bench", "name": "Crude Bench", "category": "deployable", "weight": 6, "deploys": "entity.crude_bench" },
+    { "key": "item.deployable.smelter", "name": "Smelter", "category": "deployable", "weight": 10, "deploys": "entity.smelter" },
+    { "key": "item.deployable.small_chest", "name": "Small Chest", "category": "deployable", "weight": 3, "deploys": "entity.small_chest" },
+    { "key": "item.deployable.bedroll", "name": "Bedroll", "category": "deployable", "weight": 1.5, "deploys": "entity.bedroll" }
+  ]
+}

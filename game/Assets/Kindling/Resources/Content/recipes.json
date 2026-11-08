@@ -1,0 +1,21 @@
+// Crafting recipes. station: hand, crudeBench, forgeBench, machinistBench, campfire, smelter, tinkerBench.
+{
+  "recipes": [
+    { "key": "recipe.cloth", "name": "Cloth", "output": "item.component.cloth", "amount": 1, "seconds": 2, "inputs": { "item.resource.fiber": 10 } },
+    { "key": "recipe.rope", "name": "Rope", "output": "item.component.rope", "amount": 1, "seconds": 3, "inputs": { "item.component.cloth": 4 } },
+    { "key": "recipe.torch", "name": "Torch", "output": "item.tool.torch", "seconds": 3, "inputs": { "item.resource.wood": 20, "item.component.cloth": 2 } },
+    { "key": "recipe.stone_hatchet", "name": "Stone Hatchet", "output": "item.tool.stone_hatchet", "seconds": 10, "inputs": { "item.resource.wood": 150, "item.resource.stone": 80 } },
+    { "key": "recipe.stone_pick", "name": "Stone Pick", "output": "item.tool.stone_pick", "seconds": 10, "inputs": { "item.resource.wood": 150, "item.resource.stone": 100 } },
+    { "key": "recipe.campfire", "name": "Campfire", "output": "item.deployable.campfire", "seconds": 5, "inputs": { "item.resource.wood": 80 } },
+    { "key": "recipe.bedroll", "name": "Bedroll", "output": "item.deployable.bedroll", "seconds": 8, "inputs": { "item.component.cloth": 20, "item.resource.wood": 30 } },
+    { "key": "recipe.small_chest", "name": "Small Chest", "output": "item.deployable.small_chest", "seconds": 6, "inputs": { "item.resource.wood": 120 } },
+    { "key": "recipe.bandage", "name": "Bandage", "output": "item.medical.bandage", "seconds": 3, "inputs": { "item.component.cloth": 3 } },
+    { "key": "recipe.fiber_hood", "name": "Fiber Hood", "output": "item.clothing.fiber_hood", "seconds": 6, "inputs": { "item.component.cloth": 8 } },
+    { "key": "recipe.fiber_shirt", "name": "Fiber Shirt", "output": "item.clothing.fiber_shirt", "seconds": 8, "inputs": { "item.component.cloth": 15 } },
+    { "key": "recipe.fiber_pants", "name": "Fiber Pants", "output": "item.clothing.fiber_pants", "seconds": 8, "inputs": { "item.component.cloth": 12 } },
+    { "key": "recipe.fiber_wraps", "name": "Fiber Foot Wraps", "output": "item.clothing.fiber_wraps", "seconds": 5, "inputs": { "item.component.cloth": 6 } },
+    { "key": "recipe.crude_bench", "name": "Crude Bench", "output": "item.deployable.crude_bench", "seconds": 15, "inputs": { "item.resource.wood": 250, "item.resource.stone": 100 } },
+    { "key": "recipe.smelter", "name": "Smelter", "output": "item.deployable.smelter", "station": "crudeBench", "tier": 1, "seconds": 20,
+      "inputs": { "item.resource.stone": 300, "item.resource.wood": 150, "item.component.rope": 2 } }
+  ]
+}

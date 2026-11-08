@@ -16,7 +16,7 @@ namespace Kindling.Content
 
         static readonly string[] s_KindPrefixes =
         {
-            "item", "recipe", "piece", "loot", "season", "biome", "weather", "event", "cos", "map",
+            "item", "recipe", "piece", "loot", "season", "biome", "weather", "event", "cos", "map", "node", "entity",
         };
 
         readonly string m_Value;
@@ -143,5 +143,11 @@ namespace Kindling.Content
         Event = 7,
         Cosmetic = 8,
         Map = 9,
+
+        /// <summary>Resource node type (tree, rock, ore, plant).</summary>
+        Node = 10,
+
+        /// <summary>World entity type (deployable, loot container, dropped item, body, sleeper).</summary>
+        Entity = 11,
     }
 }

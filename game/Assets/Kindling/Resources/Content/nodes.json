@@ -1,0 +1,20 @@
+// Resource nodes placed on the map. kind: wood, stone, ore, plant, salvage. minTier: tool tier needed (0 = hands/rock).
+// Pickable nodes (plants) are collected with Interact and give their whole yield at once.
+{
+  "nodes": [
+    { "key": "node.tree.pine", "name": "Pine", "kind": "wood", "minTier": 0, "primary": "item.resource.wood", "yield": 300,
+      "bonus": [ { "item": "item.resource.resin", "chance": 0.08, "amount": 1 } ], "respawnSeconds": 900, "size": [0.6, 7, 0.6], "mapCount": 350 },
+    { "key": "node.tree.birch", "name": "Birch", "kind": "wood", "minTier": 0, "primary": "item.resource.wood", "yield": 220,
+      "respawnSeconds": 900, "size": [0.5, 6, 0.5], "mapCount": 150 },
+    { "key": "node.rock.stone", "name": "Stone Outcrop", "kind": "stone", "minTier": 0, "primary": "item.resource.stone", "yield": 400,
+      "respawnSeconds": 1200, "size": [2, 1.4, 2], "mapCount": 150 },
+    { "key": "node.ore.iron", "name": "Iron Deposit", "kind": "ore", "minTier": 1, "primary": "item.resource.iron_ore", "yield": 250,
+      "bonus": [ { "item": "item.resource.stone", "chance": 0.5, "amount": 5 } ], "respawnSeconds": 1800, "size": [1.6, 1.2, 1.6], "mapCount": 50 },
+    { "key": "node.plant.hemp", "name": "Fiber Plant", "kind": "plant", "pickable": true, "primary": "item.resource.fiber", "yield": 20,
+      "respawnSeconds": 300, "size": [0.6, 0.9, 0.6], "mapCount": 220 },
+    { "key": "node.plant.berry_bush", "name": "Berry Bush", "kind": "plant", "pickable": true, "primary": "item.food.berries", "yield": 5,
+      "respawnSeconds": 600, "size": [0.9, 0.8, 0.9], "mapCount": 80 },
+    { "key": "node.plant.mushroom", "name": "Mushroom", "kind": "plant", "pickable": true, "primary": "item.food.mushroom_raw", "yield": 3,
+      "respawnSeconds": 600, "size": [0.3, 0.3, 0.3], "mapCount": 80 }
+  ]
+}
