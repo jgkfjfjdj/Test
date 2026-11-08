@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using Kindling.Net.Protocol;
 using LiteNetLib;
+using Kindling.Core.Serialization;
 
 namespace Kindling.Net.Transport
 {

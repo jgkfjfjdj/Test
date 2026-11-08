@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using Kindling.Core.Numerics;
+using Kindling.Core.Serialization;
 
 namespace Kindling.Net.Protocol
 {

@@ -8,6 +8,7 @@ using Kindling.Net.Server;
 using Kindling.Net.Transport;
 using Kindling.Simulation.Movement;
 using NUnit.Framework;
+using Kindling.Core.Serialization;
 
 namespace Kindling.Tests.Pure.Net
 {

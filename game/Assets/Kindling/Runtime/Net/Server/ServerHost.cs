@@ -9,6 +9,7 @@ using Kindling.Net.Transport;
 using Kindling.Simulation.Collision;
 using Kindling.Simulation.Movement;
 using Kindling.Simulation.World;
+using Kindling.Core.Serialization;
 
 namespace Kindling.Net.Server
 {

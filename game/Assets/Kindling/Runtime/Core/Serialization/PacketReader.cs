@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace Kindling.Net.Protocol
+namespace Kindling.Core.Serialization
 {
     /// <summary>
     /// Little-endian binary reader over a byte range. Every read is bounds-checked: reading past the end

@@ -1,3 +1,5 @@
+using Kindling.Core.Serialization;
+
 namespace Kindling.Net.Protocol
 {
     /// <summary>Encodes the reason carried with a transport disconnect: code byte + optional message.</summary>

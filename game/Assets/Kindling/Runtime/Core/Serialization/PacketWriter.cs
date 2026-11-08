@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace Kindling.Net.Protocol
+namespace Kindling.Core.Serialization
 {
     /// <summary>
     /// Little-endian binary writer over a growable buffer. Reused between messages (call

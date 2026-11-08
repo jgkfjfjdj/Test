@@ -21,6 +21,7 @@ namespace Kindling.Simulation.World
         readonly Dictionary<ChunkCoord, List<int>> m_ByChunk = new Dictionary<ChunkCoord, List<int>>();
         readonly Dictionary<ChunkCoord, uint> m_ChunkVersions = new Dictionary<ChunkCoord, uint>();
         readonly List<int> m_Changed = new List<int>();
+        readonly HashSet<int> m_SaveDirty = new HashSet<int>();
         static readonly List<int> s_Empty = new List<int>();
 
         public ResourceField(StaticMap map, WorldGrid grid)
@@ -76,6 +77,7 @@ namespace Kindling.Simulation.World
             float taken = Math.Min(amount, m_Remaining[index]);
             m_Remaining[index] -= taken;
             m_Hits[index]++;
+            m_SaveDirty.Add(index);
             if (m_Remaining[index] <= 0.0001f)
             {
                 m_Alive[index] = false;
@@ -221,8 +223,17 @@ namespace Kindling.Simulation.World
             }
         }
 
+        /// <summary>Nodes whose saved state changed since the last call (any harvest, depletion or respawn).</summary>
+        public void ConsumeSaveDirty(List<int> nodes)
+        {
+            nodes.Clear();
+            nodes.AddRange(m_SaveDirty);
+            m_SaveDirty.Clear();
+        }
+
         void Changed(int index)
         {
+            m_SaveDirty.Add(index);
             ChunkCoord c = ChunkOf(m_Map.Nodes[index].Position);
             m_ChunkVersions[c] = ChunkVersion(c) + 1;
             m_Changed.Add(index);

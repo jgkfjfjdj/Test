@@ -1,3 +1,5 @@
+using Kindling.Core.Serialization;
+
 namespace Kindling.Net.Protocol
 {
     /// <summary>Client → server, first message after the transport connects (reliable).</summary>

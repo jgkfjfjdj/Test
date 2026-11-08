@@ -198,6 +198,15 @@ namespace Kindling.Simulation.Game
             }
         }
 
+        /// <summary>After loading a save: characters that were in the world (alive or downed) sleep where they were.</summary>
+        public void RestoreSleeper(Character c)
+        {
+            if (!c.Online && c.Life != LifeState.Dead && c.SleeperEntityId == 0)
+            {
+                SpawnSleeper(c);
+            }
+        }
+
         void UpdateSleepers()
         {
             if (Config.SleeperMode != SleeperMode.Vanish)

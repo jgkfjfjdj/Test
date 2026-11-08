@@ -117,6 +117,11 @@ namespace Kindling.Simulation.Game
             c.OfflineSince = Now;
             c.OpenContainerId = 0;
             c.Motion.Velocity = Vector3.Zero;
+            if (c.Life == LifeState.Downed)
+            {
+                Die(c, c.LastDamage); // logging out while downed doesn't save you
+            }
+
             if (c.Life != LifeState.Dead)
             {
                 SpawnSleeper(c);

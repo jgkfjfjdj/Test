@@ -1,4 +1,5 @@
 using Kindling.Simulation.Movement;
+using Kindling.Core.Serialization;
 
 namespace Kindling.Net.Protocol
 {

@@ -3,6 +3,7 @@ using System.Numerics;
 using Kindling.Net.Protocol;
 using Kindling.Simulation.Movement;
 using NUnit.Framework;
+using Kindling.Core.Serialization;
 
 namespace Kindling.Tests.Pure.Net
 {

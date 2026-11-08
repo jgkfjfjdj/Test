@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Kindling.Core.Serialization;
 
 namespace Kindling.Net.Protocol
 {
