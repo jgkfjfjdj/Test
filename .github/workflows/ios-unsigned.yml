@@ -29,6 +29,9 @@ jobs:
   preflight:
     name: Check Unity secrets
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read   # list the repository's Environments when a secret is missing
     steps:
       - name: Secrets checklist
         env:
@@ -66,6 +69,49 @@ jobs:
             exit 1
           fi
           echo "Ready — starting unsigned build $BUILD_NUMBER." >> "$GITHUB_STEP_SUMMARY"
+      # When a secret is missing, show where it might have gone instead. Only NAMES are printed —
+      # values never leave the secrets context (and GitHub masks them in logs anyway).
+      - name: Where did the secrets go?
+        if: failure()
+        env:
+          ALL_SECRETS: ${{ toJSON(secrets) }}
+          ALL_VARS: ${{ toJSON(vars) }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          secret_names=$(jq -r 'keys[] | select(ascii_downcase != "github_token")' <<< "$ALL_SECRETS" | sort)
+          var_names=$(jq -r 'keys[]' <<< "${ALL_VARS:-"{}"}" | sort)
+          envs=$(curl -fsS -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+                   "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/environments" | jq -r '.environments[]?.name' || true)
+          list() { if [ -n "$1" ]; then paste -sd, <<< "$1" | sed 's/,/, /g'; else echo "none"; fi; }
+          echo "Repository Actions secrets visible to this job: $(list "$secret_names")"
+          echo "Repository Actions variables visible to this job: $(list "$var_names")"
+          echo "Environments in this repository: $(list "$envs")"
+          {
+            echo "### What this workflow can see (names only)"
+            echo ""
+            echo "- Repository Actions **secrets**: $(list "$secret_names")"
+            echo "- Repository Actions **variables**: $(list "$var_names")"
+            echo "- **Environments**: $(list "$envs")"
+            echo ""
+            echo "The Unity secrets must be under **Settings → Secrets and variables → Actions → Secrets tab →"
+            echo "Repository secrets**, named exactly \`UNITY_LICENSE\`, \`UNITY_EMAIL\`, \`UNITY_PASSWORD\`."
+            echo "The *Variables* tab, *Codespaces* / *Dependabot* secrets and *Environment* secrets are not seen by this build."
+          } >> "$GITHUB_STEP_SUMMARY"
+          for name in UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD UNITY_SERIAL; do
+            if grep -qx "$name" <<< "$var_names"; then
+              echo "::error title=$name is a Variable::$name was saved on the Variables tab. Delete it there and add it on the Secrets tab (variables are stored in plain text)."
+            fi
+          done
+          if [ -n "$envs" ]; then
+            echo "::warning title=Environments exist::If you put the Unity secrets inside an Environment ($(list "$envs")), add them as Repository secrets instead."
+          fi
+          for name in $secret_names; do
+            case "$name" in
+              UNITY_LICENSE|UNITY_EMAIL|UNITY_PASSWORD|UNITY_SERIAL) ;;
+              *UNITY*|*LICEN*|*EMAIL*|*PASSWORD*)
+                echo "::error title=Secret name mismatch?::Found a secret named $name; the workflow needs exactly UNITY_LICENSE, UNITY_EMAIL and UNITY_PASSWORD." ;;
+            esac
+          done
 
   xcode-project:
     name: Unity → Xcode project
