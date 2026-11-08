@@ -15,7 +15,7 @@
 
 | Layer | Choice |
 |-------|--------|
-| Netcode | FishNet (tick-based; prediction; observers; broadcasts) |
+| Netcode | ~~FishNet~~ → LiteNetLib + our own netcode ([ADR 0007](../adr/0007-netcode-litenetlib-own-simulation.md), [protocol](../protocol/game-netcode.md)) |
 | Transport | Tugboat (LiteNetLib, UDP), **IPv6 dual-stack** |
 | Channels | *Reliable ordered*: intents, inventory, chunk snapshots/deltas, chat, RPC results. *Unreliable*: player inputs (sent redundantly), remote entity state |
 | MTU | Conservative payload of about 1 200 bytes, to stay under fragmentation thresholds on mobile carriers |

@@ -35,8 +35,8 @@ platform-wide moderation. Community servers are trusted with *their own world on
 | Area | Decision | Why (short) — details in |
 |------|----------|--------------------------|
 | Game engine | **Unity 6 LTS** (exact patch pinned in M0), URP, IL2CPP | Best-proven engine for 3D multiplayer on iOS; one project builds both the iOS client and the Linux dedicated server; C# iterates fast — [02](02-technology-stack.md) |
-| Netcode | **FishNet** (server-authoritative, client-side prediction). Fallback: Mirror | Free, self-hostable, has prediction built in, no per-player fees. Validated in M1 before we commit — [02](02-technology-stack.md), [05](05-multiplayer-networking.md) |
-| Transport | UDP (LiteNetLib through FishNet's Tugboat), IPv6 dual-stack | Low latency; tolerates mobile packet loss; Apple requires IPv6-only (NAT64) support — [05](05-multiplayer-networking.md) |
+| Netcode | ~~FishNet~~ → **LiteNetLib + own engine-independent netcode** (ADR 0007, M1) | Free, self-hostable, has prediction built in, no per-player fees. Validated in M1 before we commit — [02](02-technology-stack.md), [05](05-multiplayer-networking.md) |
+| Transport | UDP (LiteNetLib, used directly since ADR 0007), IPv6 dual-stack | Low latency; tolerates mobile packet loss; Apple requires IPv6-only (NAT64) support — [05](05-multiplayer-networking.md) |
 | World replication | NetworkObjects for *dynamic* entities only; **custom chunk replication** for buildings, resource nodes, containers and deployables | Tens of thousands of static entities can't each be a networked object on a mobile-scale server — [05](05-multiplayer-networking.md) |
 | World persistence | **SQLite world database per game server** (WAL), plus backups to object storage | Works the same on official and community servers; transactional; crash-safe — [06](06-dedicated-servers.md) |
 | Backend | **Node.js 24 LTS + TypeScript, Fastify**, modular monolith (`api` + `worker` processes) | You asked for it; the workload is I/O-bound; the admin panel shares the TypeScript contracts — [07](07-backend.md) |

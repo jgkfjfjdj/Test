@@ -52,6 +52,7 @@ namespace Kindling.Controls
                     settings.AimTapToggles ? ButtonBehavior.TapToggleHoldMomentary : ButtonBehavior.Momentary, InputButtons.Aim),
                 new TouchButton(ControlButton.Sprint, ScreenRect.FromCenter(new Vector2(safeArea.X + margin + small / 2, bottom + small / 2), small), ButtonBehavior.Toggle, InputButtons.Sprint),
                 new TouchButton(ControlButton.Interact, new ScreenRect(screenSize.X / 2 - 110f, screenSize.Y * 0.32f, 220f, 52f), ButtonBehavior.Momentary, InputButtons.Interact) { Visible = false },
+                new TouchButton(ControlButton.Menu, new ScreenRect(right - 52f, safeArea.YMax - margin - 52f, 52f, 52f), ButtonBehavior.Momentary, InputButtons.None),
             };
 
             var movementZone = new ScreenRect(safeArea.X, safeArea.Y, safeArea.Width * 0.4f, safeArea.Height * 0.75f);

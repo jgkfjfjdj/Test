@@ -57,6 +57,9 @@ MonoBehaviours for presentation.
 | Photon Fusion 2 | Server / host / shared | Excellent | Per-CCU pricing; dedicated servers tied to their plans | Hard for community servers | Rejected (cost and hosting model) |
 | Custom on LiteNetLib | Anything | DIY | Free | Yes | Too much to build first |
 
+> **Update (M1):** FishNet was replaced by LiteNetLib + our own engine-independent netcode — see
+> [ADR 0007](../adr/0007-netcode-litenetlib-own-simulation.md). The text below is the original choice.
+
 **Why FishNet:** tick-based prediction and reconciliation, observer (interest management) conditions,
 broadcasts for custom message streams, compile-time code generation that is IL2CPP-safe, and a
 LiteNetLib UDP transport (Tugboat). No CCU fees means community servers cost us nothing.

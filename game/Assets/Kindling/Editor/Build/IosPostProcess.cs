@@ -12,6 +12,8 @@ namespace Kindling.Editor.Build
     /// - ITSAppUsesNonExemptEncryption = false: the app only uses HTTPS/TLS provided by iOS, which is
     ///   exempt, so App Store Connect doesn't hold each TestFlight build for the export-compliance question.
     /// - The app is a game and full-screen landscape only.
+    /// - NSLocalNetworkUsageDescription: joining or hosting a test server on Wi-Fi talks to devices on
+    ///   the local network, which iOS asks the player to allow (with this explanation).
     /// Compiled only when the active build target is iOS (UnityEditor.iOS.Xcode exists only then).
     /// </summary>
     public sealed class IosPostProcess : IPostprocessBuildWithReport
@@ -32,6 +34,7 @@ namespace Kindling.Editor.Build
             root.SetBoolean("ITSAppUsesNonExemptEncryption", false);
             root.SetString("LSApplicationCategoryType", "public.app-category.games");
             root.SetBoolean("UIRequiresFullScreen", true);
+            root.SetString("NSLocalNetworkUsageDescription", "Kindling connects to game servers on your local network when you join or host a game over Wi-Fi.");
             plist.WriteToFile(plistPath);
         }
     }

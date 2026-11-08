@@ -16,7 +16,7 @@ Kindling.Content       definition types (ItemDef, RecipeDef, BuildPieceDef, Loot
    ▲
 Kindling.Simulation    pure rules: inventory ops, crafting, damage math, stability, survival stats, placement rules
    ▲                   (no UnityEngine dependency where possible → also compiled by `dotnet test`)
-Kindling.Net           protocol, message types, serializers, chunk replication, FishNet adapters, tickets/resume
+Kindling.Net           protocol, message types, serializers, chunk replication, transports (ADR 0007), tickets/resume
    ▲
 Kindling.Gameplay      shared MonoBehaviours: player, entities, world, interaction, building, weather/time
    ▲            ▲

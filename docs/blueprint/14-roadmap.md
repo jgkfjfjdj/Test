@@ -54,7 +54,7 @@ M3–M9, which can run in parallel.
 - Headless **bot clients** + `tools/loadtest` launcher; server tick/bandwidth metrics.
 - Resume-token reconnect after the app goes to the background.
 **Exit criteria:** 2+ real iPhones + 30 bots on a Linux server (cloud VM) play smoothly; prediction corrections are rare and invisible on Wi-Fi and LTE; measured tick time, bandwidth and prediction error are recorded in an ADR.
-**Decision gate:** confirm FishNet (or switch to Mirror now, before more is built on it).
+**Decision gate:** confirm FishNet (or switch to Mirror now, before more is built on it). → Decided in M1: LiteNetLib + own netcode ([ADR 0007](../adr/0007-netcode-litenetlib-own-simulation.md)); status in [M1.md](../milestones/M1.md).
 
 ### M2 — Accounts, backend core, server registry, join tickets (4–5 weeks)
 **Deliverables**

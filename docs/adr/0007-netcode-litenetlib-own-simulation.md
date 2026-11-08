@@ -36,3 +36,11 @@ lag compensation, join tickets, resume tokens, server link). Starting M1 showed 
 - Float determinism across platforms (ARM64 iPhone vs x64 server) is "close", not bit-exact;
   reconciliation corrects small differences (threshold 1 cm).
 - FishNet is not added to the project.
+
+## Measurements (M1)
+
+Recorded in [docs/milestones/M1.md](../milestones/M1.md#load-tests-real-udp-simloadtestsh), raw
+data in `docs/milestones/M1-loadtest/`. Summary: on real UDP with 30–60 ms delay and 2% loss each
+way, the server ticked in 0.13 / 0.21 / 0.85 ms on average for 30 / 50 / 100 bots (budget 33 ms),
+sending 10 / 16 / 31 KB/s to each player with everyone in view. Prediction corrections were rare
+(0–0.12 per bot-minute, largest 0.22 m). Phone-side numbers are pending device tests.

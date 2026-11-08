@@ -69,6 +69,40 @@ namespace Kindling.Editor.Setup
 
             // Keep simulating when the editor or server window loses focus.
             PlayerSettings.runInBackground = true;
+
+            EnableBothInputBackends();
+        }
+
+        /// <summary>
+        /// Active Input Handling = Both: the client reads touch through the Input System package and keeps
+        /// the legacy Input class as a fallback. There is no public API for this setting, so it is set on
+        /// the serialized ProjectSettings asset (0 = legacy, 1 = Input System, 2 = both); it applies to
+        /// player builds made afterwards (the open editor needs a restart to switch its own backend).
+        /// </summary>
+        static void EnableBothInputBackends()
+        {
+            const int Both = 2;
+            Object settings = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/ProjectSettings.asset").FirstOrDefault();
+            if (settings == null)
+            {
+                Debug.LogWarning("[KINDLING] ProjectSettings.asset not found; set Active Input Handling to Both by hand.");
+                return;
+            }
+
+            var serialized = new SerializedObject(settings);
+            SerializedProperty handler = serialized.FindProperty("activeInputHandler");
+            if (handler == null)
+            {
+                Debug.LogWarning("[KINDLING] activeInputHandler not found; set Active Input Handling to Both by hand.");
+                return;
+            }
+
+            if (handler.intValue != Both)
+            {
+                handler.intValue = Both;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+                Debug.Log("[KINDLING] Active Input Handling set to Both (Input System + legacy).");
+            }
         }
 
         static void ApplyEditorSettings()

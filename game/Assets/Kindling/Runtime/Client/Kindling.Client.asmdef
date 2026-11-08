@@ -1,0 +1,23 @@
+{
+    "name": "Kindling.Client",
+    "rootNamespace": "Kindling.Client",
+    "references": [
+        "Kindling.Core",
+        "Kindling.Simulation",
+        "Kindling.Net",
+        "Kindling.Controls",
+        "Kindling.Gameplay",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "!UNITY_SERVER"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

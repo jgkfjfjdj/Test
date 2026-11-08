@@ -10,6 +10,9 @@ namespace Kindling.Controls
         Attack,
         Aim,
         Interact,
+
+        /// <summary>Opens the pause menu (no simulation input).</summary>
+        Menu,
     }
 
     public enum ButtonBehavior : byte
@@ -54,6 +57,9 @@ namespace Kindling.Controls
 
         public bool Held { get; private set; }
 
+        /// <summary>Times this button was pressed; UI code compares it to detect new presses.</summary>
+        public int PressCount { get; private set; }
+
         public bool Toggled { get; private set; }
 
         /// <summary>On for this frame: held, or toggled on.</summary>
@@ -62,6 +68,7 @@ namespace Kindling.Controls
         internal void Press(double time)
         {
             Held = true;
+            PressCount++;
             m_PressedAt = time;
             m_ToggledAtPress = Toggled;
             if (Behavior == ButtonBehavior.Toggle)

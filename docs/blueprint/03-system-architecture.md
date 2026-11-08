@@ -149,7 +149,7 @@ sequenceDiagram
 ### 5.4 Gameplay tick (server, 30 Hz)
 Receive inputs → simulate players (movement validation) → process intents (interact, craft, build,
 attack) → simulate projectiles, AI, physics props → apply damage and deaths → survival stat updates
-(1 Hz) → interest management → send state (FishNet sync + chunk deltas + inventory deltas) → mark
+(1 Hz) → interest management → send state (player snapshots + chunk deltas + inventory deltas; ADR 0007) → mark
 changed entities dirty for saving.
 
 ### 5.5 Saving

@@ -35,7 +35,7 @@ when its first real file is committed.
 │   │   │   │   ├── Simulation/           Kindling.Simulation.asmdef  (rules: inventory, crafting, damage,
 │   │   │   │   │                                                       stability, survival, placement)
 │   │   │   │   ├── Net/                  Kindling.Net.asmdef         (protocol, chunk replication, tickets,
-│   │   │   │   │                                                       FishNet adapters, lag compensation)
+│   │   │   │   │                                                       transports, lag compensation)   [ADR 0007]
 │   │   │   │   ├── Gameplay/             Kindling.Gameplay.asmdef    (player, entities, world, interaction,
 │   │   │   │   │                                                       building, weather/time, AI)
 │   │   │   │   ├── Server/               Kindling.Server.asmdef      (authority, persistence/SQLite, server link,
@@ -59,7 +59,7 @@ when its first real file is committed.
 │   │   │   ├── Localization/             string tables
 │   │   │   └── AddressableAssetsData/
 │   │   ├── Plugins/iOS/                  Objective-C/Swift bridges (haptics, thermal, App Attest, SiwA, push)
-│   │   ├── ThirdParty/                   vendored libraries (FishNet) + VERSIONS.md + license files
+│   │   ├── ThirdParty/                   vendored libraries (LiteNetLib) + VERSION.md + license files
 │   │   └── Tests/
 │   │       ├── EditMode/                 Kindling.Tests.EditMode.asmdef
 │   │       └── PlayMode/                 Kindling.Tests.PlayMode.asmdef

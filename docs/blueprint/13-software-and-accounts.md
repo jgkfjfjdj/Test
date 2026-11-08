@@ -57,7 +57,7 @@ On the iPhone: **TestFlight** app; enable **Developer Mode** (Settings → Priva
 
 Universal RP, Input System, Addressables, Burst, Collections, Mathematics, TextMeshPro (included in
 uGUI in Unity 6), Localization, Test Framework, Memory Profiler, Newtonsoft JSON, Profile Analyzer.
-Vendored: FishNet (pinned). Later: Sentry Unity SDK, Unity IAP or a StoreKit 2 bridge, Sign in with Apple
+Vendored: LiteNetLib (pinned; FishNet was replaced by ADR 0007). Later: Sentry Unity SDK, Unity IAP or a StoreKit 2 bridge, Sign in with Apple
 plugin (open source).
 
 ## 5. Backend and web dependencies (installed by `pnpm install`)

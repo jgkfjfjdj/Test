@@ -195,6 +195,17 @@ namespace Kindling.Tests.Pure.Controls
         }
 
         [Test]
+        public void MenuButtonCountsPressesWithoutDrivingTheSimulation()
+        {
+            Vector2 menu = Center(ControlButton.Menu);
+            TouchButton button = m_Router.Layout.Find(ControlButton.Menu);
+            ControlFrame f = Frame(T(1, menu.X, menu.Y, TouchPhase.Began));
+            Assert.That(button.PressCount, Is.EqualTo(1));
+            Assert.That(f.Pressed, Is.EqualTo(InputButtons.None));
+            Assert.That(f.Held, Is.EqualTo(InputButtons.None));
+        }
+
+        [Test]
         public void FixedJoystickStaysAtItsHome()
         {
             m_Settings.FloatingJoystick = false;
