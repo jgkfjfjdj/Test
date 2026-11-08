@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Headless dev server: the same ServerHost the Unity dedicated server runs, without Unity.
+    Used for local play tests from the editor/phone, bot load tests and CI.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Kindling.Tools/Kindling.Tools.csproj" />
+  </ItemGroup>
+</Project>

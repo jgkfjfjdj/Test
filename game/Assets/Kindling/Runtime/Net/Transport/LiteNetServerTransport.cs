@@ -15,7 +15,7 @@ namespace Kindling.Net.Transport
         ITransportEvents m_Events;
 
         /// <param name="maxConnections">Transport limit; keep it above the game's player limit so a "server full" reason can still be delivered.</param>
-        public LiteNetServerTransport(int maxConnections, int disconnectTimeoutMs = 10000)
+        public LiteNetServerTransport(int maxConnections, int disconnectTimeoutMs = 10000, LinkSimulation simulation = null)
         {
             m_MaxConnections = maxConnections;
             m_Manager = new NetManager(this)
@@ -28,6 +28,14 @@ namespace Kindling.Net.Transport
                 UpdateTime = 10,
                 ChannelsCount = 1,
             };
+            if (simulation != null)
+            {
+                m_Manager.SimulateLatency = simulation.MaxLatencyMs > 0;
+                m_Manager.SimulationMinLatency = simulation.MinLatencyMs;
+                m_Manager.SimulationMaxLatency = System.Math.Max(simulation.MinLatencyMs, simulation.MaxLatencyMs);
+                m_Manager.SimulatePacketLoss = simulation.LossPercent > 0;
+                m_Manager.SimulationPacketLossChance = simulation.LossPercent;
+            }
         }
 
         public TransportCounters Counters { get; } = new TransportCounters();
@@ -49,10 +57,20 @@ namespace Kindling.Net.Transport
         {
             if (m_Peers.TryGetValue(connectionId, out NetPeer peer))
             {
-                peer.Send(data, offset, count, ToMethod(delivery));
+                DeliveryMethod method = ToMethod(delivery);
+                if (method == DeliveryMethod.Sequenced && count > peer.GetMaxSinglePacketSize(method))
+                {
+                    Counters.OversizeDropped++; // LiteNetLib would throw; never take the server down for it
+                    return;
+                }
+
+                peer.Send(data, offset, count, method);
                 Counters.CountSent(count);
             }
         }
+
+        public int GetMaxSequencedPayload(int connectionId) =>
+            m_Peers.TryGetValue(connectionId, out NetPeer peer) ? peer.GetMaxSinglePacketSize(DeliveryMethod.Sequenced) : 0;
 
         public void Disconnect(int connectionId, DisconnectCode code, string message = null)
         {

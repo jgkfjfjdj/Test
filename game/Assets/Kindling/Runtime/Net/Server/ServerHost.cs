@@ -220,6 +220,12 @@ namespace Kindling.Net.Server
                     continue;
                 }
 
+                int budget = Math.Min(NetProtocol.SnapshotBudgetBytes, m_Transport.GetMaxSequencedPayload(observer.ConnectionId));
+                if (budget < NetProtocol.MinSnapshotBudgetBytes)
+                {
+                    continue; // connection unknown to the transport (closing)
+                }
+
                 var origin = observer.StateField.Position;
                 byte depth = (byte)Math.Min(255, observer.PendingInputs.Count);
                 m_Writer.Reset();
@@ -242,7 +248,7 @@ namespace Kindling.Net.Server
                         continue;
                     }
 
-                    if (count == 255 || m_Writer.Length + EntitySnapshot.MaxEncodedSize > NetProtocol.SnapshotBudgetBytes)
+                    if (count == 255 || m_Writer.Length + EntitySnapshot.MaxEncodedSize > budget)
                     {
                         SnapshotMessage.SetEntityCount(m_Writer, countOffset, count);
                         SendSnapshotPart(observer);

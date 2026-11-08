@@ -36,3 +36,16 @@ jobs:
         with:
           dotnet-version: '8.0.x'
       - run: dotnet test sim/Kindling.Sim.Tests --configuration Release --logger "console;verbosity=normal"
+      - name: Build dev server and bots
+        run: |
+          dotnet build sim/Kindling.DevServer --configuration Release
+          dotnet build sim/Kindling.Bots --configuration Release
+      - name: Real-UDP smoke test (dev server + 20 bots, 15 s)
+        run: |
+          dotnet sim/Kindling.DevServer/bin/Release/net8.0/Kindling.DevServer.dll --duration 30 --stats-interval 5 > server.log 2>&1 &
+          sleep 3
+          dotnet sim/Kindling.Bots/bin/Release/net8.0/Kindling.Bots.dll --count 20 --duration 15
+          wait
+          grep -q "oversize=0" server.log
+          if grep -q "Unhandled exception" server.log; then cat server.log; exit 1; fi
+          grep '\[stats\]' server.log

@@ -1,0 +1,146 @@
+{
+  "TickRate": 30,
+  "ProcessorCount": 4,
+  "Ticks": 2251,
+  "StarvedTicks": 558,
+  "DroppedInputs": 0,
+  "MaxSnapshotBytes": 690,
+  "OversizeDropped": 0,
+  "Samples": [
+    {
+      "Time": 5.0016887,
+      "Players": 50,
+      "AvgTickMs": 0.2971750141772479,
+      "MaxTickMs": 17.9756,
+      "CpuPercent": 15.594733034864806,
+      "OutKbps": 2373.5647522405784,
+      "InKbps": 363.1445515591564
+    },
+    {
+      "Time": 10.001705,
+      "Players": 50,
+      "AvgTickMs": 0.18800075084010823,
+      "MaxTickMs": 0.6148,
+      "CpuPercent": 7.999973920085021,
+      "OutKbps": 9229.910710491084,
+      "InKbps": 1251.341520626643
+    },
+    {
+      "Time": 15.0018692,
+      "Players": 50,
+      "AvgTickMs": 0.2110674814213922,
+      "MaxTickMs": 0.4295,
+      "CpuPercent": 7.799743856411754,
+      "OutKbps": 8355.917591666288,
+      "InKbps": 392.9662949868726
+    },
+    {
+      "Time": 20.0016908,
+      "Players": 50,
+      "AvgTickMs": 0.18948626782214076,
+      "MaxTickMs": 0.375,
+      "CpuPercent": 7.800278313930244,
+      "OutKbps": 8328.079545878198,
+      "InKbps": 368.9811652479761
+    },
+    {
+      "Time": 25.0017016,
+      "Players": 50,
+      "AvgTickMs": 0.194663996361022,
+      "MaxTickMs": 0.3451,
+      "CpuPercent": 7.79998315203639,
+      "OutKbps": 8224.934234142052,
+      "InKbps": 369.2920023292748
+    },
+    {
+      "Time": 30.0017054,
+      "Players": 50,
+      "AvgTickMs": 0.18966075994197332,
+      "MaxTickMs": 0.4894,
+      "CpuPercent": 7.399994376004276,
+      "OutKbps": 8193.180973182463,
+      "InKbps": 370.18691865794193
+    },
+    {
+      "Time": 35.0017778,
+      "Players": 50,
+      "AvgTickMs": 0.21631668978273957,
+      "MaxTickMs": 0.4458,
+      "CpuPercent": 7.799887057635405,
+      "OutKbps": 7995.842620198859,
+      "InKbps": 370.4282361991398
+    },
+    {
+      "Time": 40.0017327,
+      "Players": 50,
+      "AvgTickMs": 0.20144802623946378,
+      "MaxTickMs": 0.664,
+      "CpuPercent": 7.8000703566346195,
+      "OutKbps": 7736.284181283317,
+      "InKbps": 369.8353359147301
+    },
+    {
+      "Time": 45.0017005,
+      "Players": 50,
+      "AvgTickMs": 0.23911271970851553,
+      "MaxTickMs": 1.7208,
+      "CpuPercent": 7.6000489443152,
+      "OutKbps": 7507.398747647934,
+      "InKbps": 369.59918021872056
+    },
+    {
+      "Time": 50.0016877,
+      "Players": 50,
+      "AvgTickMs": 0.1885340559827908,
+      "MaxTickMs": 0.4754,
+      "CpuPercent": 7.400018944048497,
+      "OutKbps": 7310.337114463013,
+      "InKbps": 369.5945461620382
+    },
+    {
+      "Time": 55.0016831,
+      "Players": 50,
+      "AvgTickMs": 0.1886636889658247,
+      "MaxTickMs": 0.3182,
+      "CpuPercent": 7.800007176006598,
+      "OutKbps": 7152.371380181666,
+      "InKbps": 369.0707395450802
+    },
+    {
+      "Time": 60.0017166,
+      "Players": 50,
+      "AvgTickMs": 0.20707179419954172,
+      "MaxTickMs": 0.3078,
+      "CpuPercent": 7.59994908034116,
+      "OutKbps": 7015.224997992513,
+      "InKbps": 369.2855257869772
+    },
+    {
+      "Time": 65.0015324,
+      "Players": 1,
+      "AvgTickMs": 0.17684997506155184,
+      "MaxTickMs": 1.6249,
+      "CpuPercent": 8.400307467327096,
+      "OutKbps": 6346.401801442365,
+      "InKbps": 337.5756362864408
+    },
+    {
+      "Time": 70.0015288,
+      "Players": 1,
+      "AvgTickMs": 0.03021253799875913,
+      "MaxTickMs": 0.1081,
+      "CpuPercent": 4.40000516800372,
+      "OutKbps": 18.85121357287377,
+      "InKbps": 0
+    },
+    {
+      "Time": 75.0015257,
+      "Players": 1,
+      "AvgTickMs": 0.05589799930014231,
+      "MaxTickMs": 0.5955,
+      "CpuPercent": 4.2000026040016145,
+      "OutKbps": 15.033609320837781,
+      "InKbps": 0
+    }
+  ]
+}

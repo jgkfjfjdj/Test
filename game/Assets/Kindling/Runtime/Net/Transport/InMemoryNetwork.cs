@@ -43,6 +43,12 @@ namespace Kindling.Net.Transport
 
         public double DisconnectTimeoutSeconds { get; set; } = 5;
 
+        /// <summary>
+        /// Sequenced packet size limit. Defaults to LiteNetLib's limit before MTU discovery (576-byte MTU),
+        /// the worst case a real connection starts with.
+        /// </summary>
+        public int MaxSequencedPayload { get; set; } = 504;
+
         public void Advance(double seconds)
         {
             if (seconds > 0)
@@ -278,6 +284,12 @@ namespace Kindling.Net.Transport
         {
             if (m_Connections.TryGetValue(connectionId, out InMemoryLink link) && !link.Severed)
             {
+                if (delivery == Delivery.Sequenced && count > m_Network.MaxSequencedPayload)
+                {
+                    Counters.OversizeDropped++;
+                    return;
+                }
+
                 var copy = new byte[count];
                 Buffer.BlockCopy(data, offset, copy, 0, count);
                 link.ToClient.Enqueue(m_Network, link.Conditions, PacketKind.Data, copy, delivery);
@@ -300,6 +312,8 @@ namespace Kindling.Net.Transport
 
         public int GetRoundTripMs(int connectionId) =>
             m_Connections.TryGetValue(connectionId, out InMemoryLink link) ? (int)(2 * link.Conditions.LatencyMs + link.Conditions.JitterMs) : -1;
+
+        public int GetMaxSequencedPayload(int connectionId) => m_Connections.ContainsKey(connectionId) ? m_Network.MaxSequencedPayload : 0;
 
         public void Flush()
         {
@@ -426,6 +440,12 @@ namespace Kindling.Net.Transport
         {
             if (m_Link != null && m_Link.ClientConnected && !m_Link.Severed)
             {
+                if (delivery == Delivery.Sequenced && count > m_Network.MaxSequencedPayload)
+                {
+                    Counters.OversizeDropped++;
+                    return;
+                }
+
                 var copy = new byte[count];
                 Buffer.BlockCopy(data, offset, copy, 0, count);
                 m_Link.ToServer.Enqueue(m_Network, m_Link.Conditions, PacketKind.Data, copy, delivery);

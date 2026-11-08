@@ -20,8 +20,14 @@ namespace Kindling.Net.Protocol
         public const int MaxAuthTokenBytes = 2048;
         public const int ResumeTokenLength = 16;
 
-        /// <summary>Target size of one snapshot packet; larger snapshots are split into parts.</summary>
+        /// <summary>
+        /// Upper limit for one snapshot packet; larger snapshots are split into parts. The server also
+        /// stays under each connection's current sequenced packet limit (504 bytes before MTU discovery).
+        /// </summary>
         public const int SnapshotBudgetBytes = 1100;
+
+        /// <summary>Smallest packet budget the server will build snapshots for.</summary>
+        public const int MinSnapshotBudgetBytes = 200;
     }
 
     public enum MessageType : byte

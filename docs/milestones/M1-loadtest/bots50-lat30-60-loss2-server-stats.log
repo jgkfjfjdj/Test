@@ -1,0 +1,15 @@
+[stats] t=5s players=50 conns=50 tick avg=0.30ms max=17.98ms cpu=16% out=2374kbit/s in=363kbit/s snapshots=246.4KB/s starved=243 dropped=0 oversize=0
+[stats] t=10s players=50 conns=50 tick avg=0.19ms max=0.61ms cpu=8% out=9230kbit/s in=1251kbit/s snapshots=1010.7KB/s starved=243 dropped=0 oversize=0
+[stats] t=15s players=50 conns=50 tick avg=0.21ms max=0.43ms cpu=8% out=8356kbit/s in=393kbit/s snapshots=1010.7KB/s starved=245 dropped=0 oversize=0
+[stats] t=20s players=50 conns=50 tick avg=0.19ms max=0.38ms cpu=8% out=8328kbit/s in=369kbit/s snapshots=1010.1KB/s starved=246 dropped=0 oversize=0
+[stats] t=25s players=50 conns=50 tick avg=0.19ms max=0.35ms cpu=8% out=8225kbit/s in=369kbit/s snapshots=997.4KB/s starved=246 dropped=0 oversize=0
+[stats] t=30s players=50 conns=50 tick avg=0.19ms max=0.49ms cpu=7% out=8193kbit/s in=370kbit/s snapshots=993.7KB/s starved=246 dropped=0 oversize=0
+[stats] t=35s players=50 conns=50 tick avg=0.22ms max=0.45ms cpu=8% out=7996kbit/s in=370kbit/s snapshots=969.3KB/s starved=246 dropped=0 oversize=0
+[stats] t=40s players=50 conns=50 tick avg=0.20ms max=0.66ms cpu=8% out=7736kbit/s in=370kbit/s snapshots=937.7KB/s starved=246 dropped=0 oversize=0
+[stats] t=45s players=50 conns=50 tick avg=0.24ms max=1.72ms cpu=8% out=7507kbit/s in=370kbit/s snapshots=909.8KB/s starved=246 dropped=0 oversize=0
+[stats] t=50s players=50 conns=50 tick avg=0.19ms max=0.48ms cpu=7% out=7310kbit/s in=370kbit/s snapshots=885.6KB/s starved=247 dropped=0 oversize=0
+[stats] t=55s players=50 conns=50 tick avg=0.19ms max=0.32ms cpu=8% out=7152kbit/s in=369kbit/s snapshots=866.6KB/s starved=248 dropped=0 oversize=0
+[stats] t=60s players=50 conns=50 tick avg=0.21ms max=0.31ms cpu=8% out=7015kbit/s in=369kbit/s snapshots=849.7KB/s starved=249 dropped=0 oversize=0
+[stats] t=65s players=1 conns=1 tick avg=0.18ms max=1.62ms cpu=8% out=6346kbit/s in=338kbit/s snapshots=762.1KB/s starved=260 dropped=0 oversize=0
+[stats] t=70s players=1 conns=1 tick avg=0.03ms max=0.11ms cpu=4% out=19kbit/s in=0kbit/s snapshots=1.6KB/s starved=410 dropped=0 oversize=0
+[stats] t=75s players=1 conns=0 tick avg=0.06ms max=0.60ms cpu=4% out=15kbit/s in=0kbit/s snapshots=1.5KB/s starved=558 dropped=0 oversize=0

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Headless bot clients for load tests: real UDP, the same ClientSession the game uses. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Kindling.Tools/Kindling.Tools.csproj" />
+  </ItemGroup>
+</Project>

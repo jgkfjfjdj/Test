@@ -32,6 +32,12 @@ namespace Kindling.Net.Transport
         /// <summary>Round-trip time in milliseconds, or -1 if unknown.</summary>
         int GetRoundTripMs(int connectionId);
 
+        /// <summary>
+        /// Largest payload that fits one sequenced packet on this connection right now (it grows as the
+        /// path MTU is discovered), or 0 if the connection is unknown. Bigger sequenced sends are dropped.
+        /// </summary>
+        int GetMaxSequencedPayload(int connectionId);
+
         /// <summary>Sends anything queued now instead of waiting for the transport's own update.</summary>
         void Flush();
 
@@ -56,6 +62,17 @@ namespace Kindling.Net.Transport
         void Flush();
     }
 
+    /// <summary>
+    /// Simulated latency and loss on received packets (each side delays what it receives). Only works
+    /// when LiteNetLib is compiled with DEBUG (sim: build with -p:LiteNetSimulation=true); otherwise ignored.
+    /// </summary>
+    public sealed class LinkSimulation
+    {
+        public int MinLatencyMs;
+        public int MaxLatencyMs;
+        public int LossPercent;
+    }
+
     /// <summary>Byte and packet counts. Payload counts are message bytes; wire counts include transport headers where known.</summary>
     public sealed class TransportCounters
     {
@@ -65,6 +82,9 @@ namespace Kindling.Net.Transport
         public long PacketsReceived;
         public long WireBytesSent;
         public long WireBytesReceived;
+
+        /// <summary>Sequenced sends dropped for exceeding the packet size limit (should stay 0).</summary>
+        public long OversizeDropped;
 
         public void CountSent(int bytes)
         {

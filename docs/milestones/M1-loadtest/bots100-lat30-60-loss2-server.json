@@ -1,0 +1,155 @@
+{
+  "TickRate": 30,
+  "ProcessorCount": 4,
+  "Ticks": 2401,
+  "StarvedTicks": 1678,
+  "DroppedInputs": 0,
+  "MaxSnapshotBytes": 1093,
+  "OversizeDropped": 0,
+  "Samples": [
+    {
+      "Time": 5.0018745,
+      "Players": 58,
+      "AvgTickMs": 0.33243639496573596,
+      "MaxTickMs": 18.8667,
+      "CpuPercent": 14.594528511261128,
+      "OutKbps": 2516.144697352963,
+      "InKbps": 373.87263514908267
+    },
+    {
+      "Time": 10.0020921,
+      "Players": 100,
+      "AvgTickMs": 0.9606294781501127,
+      "MaxTickMs": 1.8724,
+      "CpuPercent": 17.99921667409034,
+      "OutKbps": 29486.80153439722,
+      "InKbps": 2346.985859175408
+    },
+    {
+      "Time": 15.0022965,
+      "Players": 100,
+      "AvgTickMs": 0.9443528103981688,
+      "MaxTickMs": 1.6381,
+      "CpuPercent": 14.199419527729706,
+      "OutKbps": 33092.981558913874,
+      "InKbps": 1169.4817915843603
+    },
+    {
+      "Time": 20.0022263,
+      "Players": 100,
+      "AvgTickMs": 0.9186041646131553,
+      "MaxTickMs": 1.8493,
+      "CpuPercent": 14.00019656275974,
+      "OutKbps": 32631.139741201965,
+      "InKbps": 739.1047770310695
+    },
+    {
+      "Time": 25.0022359,
+      "Players": 100,
+      "AvgTickMs": 0.9183796076857803,
+      "MaxTickMs": 7.5175,
+      "CpuPercent": 14.199972736052349,
+      "OutKbps": 32337.454712086965,
+      "InKbps": 739.7553796696712
+    },
+    {
+      "Time": 30.0024868,
+      "Players": 100,
+      "AvgTickMs": 0.9212960270546818,
+      "MaxTickMs": 5.9036,
+      "CpuPercent": 14.399277444257844,
+      "OutKbps": 31962.680912671796,
+      "InKbps": 739.5244906610585
+    },
+    {
+      "Time": 35.0022329,
+      "Players": 100,
+      "AvgTickMs": 0.9083988084115608,
+      "MaxTickMs": 4.0142,
+      "CpuPercent": 14.60073942554802,
+      "OutKbps": 31027.874795482097,
+      "InKbps": 740.3543951961876
+    },
+    {
+      "Time": 40.002348,
+      "Players": 100,
+      "AvgTickMs": 0.871944574929033,
+      "MaxTickMs": 3.8517,
+      "CpuPercent": 14.199675123478672,
+      "OutKbps": 30033.281433861423,
+      "InKbps": 739.2405826817874
+    },
+    {
+      "Time": 45.0025471,
+      "Players": 100,
+      "AvgTickMs": 0.7479974696196188,
+      "MaxTickMs": 2.531,
+      "CpuPercent": 13.99944254219796,
+      "OutKbps": 29034.951028250034,
+      "InKbps": 739.285761640971
+    },
+    {
+      "Time": 50.0024032,
+      "Players": 100,
+      "AvgTickMs": 0.7760822102531768,
+      "MaxTickMs": 2.0058,
+      "CpuPercent": 14.200408687762026,
+      "OutKbps": 28175.266884180914,
+      "InKbps": 738.7108600985532
+    },
+    {
+      "Time": 55.0021262,
+      "Players": 100,
+      "AvgTickMs": 0.7361725885613988,
+      "MaxTickMs": 1.7924,
+      "CpuPercent": 14.200786723584496,
+      "OutKbps": 27588.02277646184,
+      "InKbps": 740.0457985372395
+    },
+    {
+      "Time": 60.002085,
+      "Players": 100,
+      "AvgTickMs": 0.6002255513934518,
+      "MaxTickMs": 2.4001,
+      "CpuPercent": 14.400118656977728,
+      "OutKbps": 27150.49892011109,
+      "InKbps": 739.5340937609324
+    },
+    {
+      "Time": 65.0019801,
+      "Players": 100,
+      "AvgTickMs": 0.8610313261104436,
+      "MaxTickMs": 5.8066,
+      "CpuPercent": 14.000293726162386,
+      "OutKbps": 26503.472842860265,
+      "InKbps": 740.5563368719481
+    },
+    {
+      "Time": 70.0015011,
+      "Players": 3,
+      "AvgTickMs": 0.053723694496197245,
+      "MaxTickMs": 2.3648,
+      "CpuPercent": 8.800843120770967,
+      "OutKbps": 11688.551763258918,
+      "InKbps": 302.5377831196228
+    },
+    {
+      "Time": 75.0014918,
+      "Players": 3,
+      "AvgTickMs": 0.04634669001796307,
+      "MaxTickMs": 0.4717,
+      "CpuPercent": 4.600008556015917,
+      "OutKbps": 58.87690951105172,
+      "InKbps": 0
+    },
+    {
+      "Time": 80.0014854,
+      "Players": 3,
+      "AvgTickMs": 0.03734479438909925,
+      "MaxTickMs": 0.752,
+      "CpuPercent": 4.4000056320072,
+      "OutKbps": 31.398440190003374,
+      "InKbps": 0
+    }
+  ]
+}

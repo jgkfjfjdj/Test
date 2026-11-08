@@ -12,7 +12,7 @@ namespace Kindling.Net.Transport
         NetPeer m_Peer;
         ITransportEvents m_Events;
 
-        public LiteNetClientTransport(int disconnectTimeoutMs = 10000)
+        public LiteNetClientTransport(int disconnectTimeoutMs = 10000, LinkSimulation simulation = null)
         {
             m_Manager = new NetManager(this)
             {
@@ -24,6 +24,14 @@ namespace Kindling.Net.Transport
                 UpdateTime = 10,
                 ChannelsCount = 1,
             };
+            if (simulation != null)
+            {
+                m_Manager.SimulateLatency = simulation.MaxLatencyMs > 0;
+                m_Manager.SimulationMinLatency = simulation.MinLatencyMs;
+                m_Manager.SimulationMaxLatency = System.Math.Max(simulation.MinLatencyMs, simulation.MaxLatencyMs);
+                m_Manager.SimulatePacketLoss = simulation.LossPercent > 0;
+                m_Manager.SimulationPacketLossChance = simulation.LossPercent;
+            }
         }
 
         public TransportCounters Counters { get; } = new TransportCounters();
@@ -60,7 +68,14 @@ namespace Kindling.Net.Transport
         {
             if (m_Peer != null && m_Peer.ConnectionState == ConnectionState.Connected)
             {
-                m_Peer.Send(data, offset, count, LiteNetServerTransport.ToMethod(delivery));
+                DeliveryMethod method = LiteNetServerTransport.ToMethod(delivery);
+                if (method == DeliveryMethod.Sequenced && count > m_Peer.GetMaxSinglePacketSize(method))
+                {
+                    Counters.OversizeDropped++;
+                    return;
+                }
+
+                m_Peer.Send(data, offset, count, method);
                 Counters.CountSent(count);
             }
         }

@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Shared helpers for the dev server and bots (not part of the game). -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Kindling.Sim/Kindling.Sim.csproj" />
+  </ItemGroup>
+</Project>

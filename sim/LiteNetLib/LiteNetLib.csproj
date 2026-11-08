@@ -9,6 +9,13 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>$(NoWarn);CS0618;CS1591;CS8632;CS0162;CS0168;CS0219</NoWarn>
   </PropertyGroup>
+  <!--
+    LiteNetLib only simulates latency/loss when compiled with DEBUG. Load tests build with
+    -p:LiteNetSimulation=true to get it in an otherwise optimized Release build.
+  -->
+  <PropertyGroup Condition="'$(LiteNetSimulation)' == 'true'">
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)../../game/Assets/ThirdParty/LiteNetLib/**/*.cs" />
   </ItemGroup>

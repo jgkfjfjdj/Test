@@ -56,3 +56,4 @@ apps/web/e2e/.auth/
 apps/web/e2e/screenshots/
 apps/web/test-results/
 apps/web/playwright-report/
+sim/loadtest-results/

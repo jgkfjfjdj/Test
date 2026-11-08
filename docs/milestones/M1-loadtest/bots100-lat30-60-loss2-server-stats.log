@@ -1,0 +1,16 @@
+[stats] t=5s players=58 conns=59 tick avg=0.33ms max=18.87ms cpu=15% out=2516kbit/s in=374kbit/s snapshots=261.3KB/s starved=268 dropped=0 oversize=0
+[stats] t=10s players=100 conns=100 tick avg=0.96ms max=1.87ms cpu=18% out=29487kbit/s in=2347kbit/s snapshots=3345.1KB/s starved=488 dropped=0 oversize=0
+[stats] t=15s players=100 conns=100 tick avg=0.94ms max=1.64ms cpu=14% out=33093kbit/s in=1169kbit/s snapshots=3948.7KB/s starved=488 dropped=0 oversize=0
+[stats] t=20s players=100 conns=100 tick avg=0.92ms max=1.85ms cpu=14% out=32631kbit/s in=739kbit/s snapshots=3943.8KB/s starved=488 dropped=0 oversize=0
+[stats] t=25s players=100 conns=100 tick avg=0.92ms max=7.52ms cpu=14% out=32337kbit/s in=740kbit/s snapshots=3907.8KB/s starved=488 dropped=0 oversize=0
+[stats] t=30s players=100 conns=100 tick avg=0.92ms max=5.90ms cpu=14% out=31963kbit/s in=740kbit/s snapshots=3862.3KB/s starved=488 dropped=0 oversize=0
+[stats] t=35s players=100 conns=100 tick avg=0.91ms max=4.01ms cpu=15% out=31028kbit/s in=740kbit/s snapshots=3749.1KB/s starved=488 dropped=0 oversize=0
+[stats] t=40s players=100 conns=100 tick avg=0.87ms max=3.85ms cpu=14% out=30033kbit/s in=739kbit/s snapshots=3629.4KB/s starved=488 dropped=0 oversize=0
+[stats] t=45s players=100 conns=100 tick avg=0.75ms max=2.53ms cpu=14% out=29035kbit/s in=739kbit/s snapshots=3509.1KB/s starved=488 dropped=0 oversize=0
+[stats] t=50s players=100 conns=100 tick avg=0.78ms max=2.01ms cpu=14% out=28175kbit/s in=739kbit/s snapshots=3406.0KB/s starved=488 dropped=0 oversize=0
+[stats] t=55s players=100 conns=100 tick avg=0.74ms max=1.79ms cpu=14% out=27588kbit/s in=740kbit/s snapshots=3335.9KB/s starved=488 dropped=0 oversize=0
+[stats] t=60s players=100 conns=100 tick avg=0.60ms max=2.40ms cpu=14% out=27150kbit/s in=740kbit/s snapshots=3282.5KB/s starved=488 dropped=0 oversize=0
+[stats] t=65s players=100 conns=100 tick avg=0.86ms max=5.81ms cpu=14% out=26503kbit/s in=741kbit/s snapshots=3205.5KB/s starved=489 dropped=0 oversize=0
+[stats] t=70s players=3 conns=3 tick avg=0.05ms max=2.36ms cpu=9% out=11689kbit/s in=303kbit/s snapshots=1386.6KB/s starved=1007 dropped=0 oversize=0
+[stats] t=75s players=3 conns=3 tick avg=0.05ms max=0.47ms cpu=5% out=59kbit/s in=0kbit/s snapshots=6.1KB/s starved=1457 dropped=0 oversize=0
+[stats] t=80s players=3 conns=0 tick avg=0.04ms max=0.75ms cpu=4% out=31kbit/s in=0kbit/s snapshots=3.2KB/s starved=1678 dropped=0 oversize=0

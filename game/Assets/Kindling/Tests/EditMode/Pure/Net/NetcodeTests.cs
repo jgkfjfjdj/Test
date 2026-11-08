@@ -291,8 +291,18 @@ namespace Kindling.Tests.Pure.Net
             var remotes = new List<RemotePlayer>();
             h.Clients[0].GetRemotePlayers(remotes);
             Assert.That(remotes.Count, Is.EqualTo(119));
+            Assert.That(h.Server.Stats.MaxSnapshotBytes, Is.LessThanOrEqualTo(h.Network.MaxSequencedPayload), "fits the smallest MTU");
+            Assert.That(h.ServerTransport.Counters.OversizeDropped, Is.EqualTo(0));
+            Assert.That(h.Server.Stats.SnapshotPackets, Is.GreaterThan(h.Server.Stats.Tick * 120 * 3), "119 players need 4 parts at 504 bytes");
+
+            // After MTU discovery the same snapshot needs fewer, bigger parts (capped by the budget).
+            h.Network.MaxSequencedPayload = 1400;
+            long packets = h.Server.Stats.SnapshotPackets;
+            long ticks = h.Server.Stats.Tick;
+            h.Run(1);
+            double partsPerSnapshot = (h.Server.Stats.SnapshotPackets - packets) / (double)((h.Server.Stats.Tick - ticks) * 120);
+            Assert.That(partsPerSnapshot, Is.EqualTo(2).Within(0.01));
             Assert.That(h.Server.Stats.MaxSnapshotBytes, Is.LessThanOrEqualTo(NetProtocol.SnapshotBudgetBytes));
-            Assert.That(h.Server.Stats.SnapshotPackets, Is.GreaterThan(h.Server.Stats.Tick * 120));
         }
 
         [TestCase(20, 0)]

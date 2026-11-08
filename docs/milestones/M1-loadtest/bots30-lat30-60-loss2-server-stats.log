@@ -1,0 +1,14 @@
+[stats] t=5s players=30 conns=30 tick avg=0.15ms max=17.36ms cpu=13% out=1453kbit/s in=292kbit/s snapshots=145.4KB/s starved=148 dropped=0 oversize=0
+[stats] t=10s players=30 conns=30 tick avg=0.13ms max=2.23ms cpu=6% out=3615kbit/s in=702kbit/s snapshots=377.9KB/s starved=148 dropped=0 oversize=0
+[stats] t=15s players=30 conns=30 tick avg=0.12ms max=0.24ms cpu=7% out=3128kbit/s in=222kbit/s snapshots=377.9KB/s starved=148 dropped=0 oversize=0
+[stats] t=20s players=30 conns=30 tick avg=0.14ms max=0.21ms cpu=6% out=3128kbit/s in=222kbit/s snapshots=377.9KB/s starved=148 dropped=0 oversize=0
+[stats] t=25s players=30 conns=30 tick avg=0.14ms max=0.25ms cpu=6% out=3107kbit/s in=221kbit/s snapshots=375.4KB/s starved=148 dropped=0 oversize=0
+[stats] t=30s players=30 conns=30 tick avg=0.14ms max=0.21ms cpu=7% out=3089kbit/s in=222kbit/s snapshots=373.1KB/s starved=148 dropped=0 oversize=0
+[stats] t=35s players=30 conns=30 tick avg=0.13ms max=0.19ms cpu=6% out=3011kbit/s in=222kbit/s snapshots=363.6KB/s starved=149 dropped=0 oversize=0
+[stats] t=40s players=30 conns=30 tick avg=0.13ms max=0.21ms cpu=7% out=2918kbit/s in=222kbit/s snapshots=352.2KB/s starved=149 dropped=0 oversize=0
+[stats] t=45s players=30 conns=30 tick avg=0.13ms max=0.19ms cpu=6% out=2827kbit/s in=222kbit/s snapshots=341.1KB/s starved=149 dropped=0 oversize=0
+[stats] t=50s players=30 conns=30 tick avg=0.14ms max=0.26ms cpu=6% out=2745kbit/s in=223kbit/s snapshots=331.0KB/s starved=149 dropped=0 oversize=0
+[stats] t=55s players=30 conns=30 tick avg=0.12ms max=0.22ms cpu=6% out=2707kbit/s in=222kbit/s snapshots=326.6KB/s starved=149 dropped=0 oversize=0
+[stats] t=60s players=30 conns=30 tick avg=0.12ms max=0.22ms cpu=6% out=2648kbit/s in=222kbit/s snapshots=319.3KB/s starved=150 dropped=0 oversize=0
+[stats] t=65s players=0 conns=0 tick avg=0.04ms max=1.27ms cpu=7% out=1848kbit/s in=158kbit/s snapshots=220.4KB/s starved=150 dropped=0 oversize=0
+[stats] t=70s players=0 conns=0 tick avg=0.03ms max=0.06ms cpu=4% out=0kbit/s in=0kbit/s snapshots=0.0KB/s starved=150 dropped=0 oversize=0

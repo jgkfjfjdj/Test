@@ -1,0 +1,18 @@
+{
+  "Target": "127.0.0.1:27018",
+  "Bots": 100,
+  "Connected": 100,
+  "Seconds": 65,
+  "DisconnectCodes": {},
+  "AverageRttMs": 139.2,
+  "SteadyCorrections": 0,
+  "CorrectionsPerBotMinute": 0,
+  "MaxCorrectionMetres": 0,
+  "AverageDownKBpsPerBot": 31.45,
+  "AverageUpKBpsPerBot": 0.79,
+  "AverageWireDownKBpsPerBot": 35.75,
+  "AverageRemotePlayersSeen": 99,
+  "AverageServerInputBuffer": 2,
+  "BotProcessCpuPercent": 51.1,
+  "ProcessorCount": 4
+}
