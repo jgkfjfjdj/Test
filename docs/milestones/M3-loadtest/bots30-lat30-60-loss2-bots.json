@@ -1,0 +1,23 @@
+{
+  "Target": "127.0.0.1:27040",
+  "Bots": 30,
+  "Connected": 30,
+  "Seconds": 61.5,
+  "DisconnectCodes": {},
+  "AverageRttMs": 124.6,
+  "SteadyCorrections": 2,
+  "CorrectionsPerBotMinute": 0.068,
+  "MaxCorrectionMetres": 0.133,
+  "AverageDownKBpsPerBot": 5.19,
+  "AverageUpKBpsPerBot": 0.78,
+  "AverageWireDownKBpsPerBot": 7.33,
+  "AverageRemotePlayersSeen": 18.7,
+  "AverageServerInputBuffer": 1.97,
+  "BotProcessCpuPercent": 19.6,
+  "WoodGathered": 3481,
+  "CampfiresPlaced": 15,
+  "ActionsSent": 60,
+  "Respawns": 0,
+  "AverageLoadedChunks": 31.8,
+  "ProcessorCount": 4
+}

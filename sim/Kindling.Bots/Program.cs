@@ -26,7 +26,8 @@ namespace Kindling.Bots
   --summary-json <p>  write a JSON summary
   --verbose           log every bot's connection events
   --sim-latency <a-b> delay received packets a..b ms (needs -p:LiteNetSimulation=true build)
-  --sim-loss <pct>    drop this percentage of received packets (same)";
+  --sim-loss <pct>    drop this percentage of received packets (same)
+  --gatherers <0..1>  fraction of bots that gather/craft instead of wandering (default 0.5)";
 
         public static int Main(string[] argv)
         {
@@ -62,9 +63,10 @@ namespace Kindling.Bots
             string summaryPath = args.String("summary-json", null);
 
             var bots = new List<Bot>();
+            double gatherers = args.Double("gatherers", 0.5);
             for (int i = 0; i < count; i++)
             {
-                bots.Add(new Bot(i, seed, "bots", LinkSimulationArgs.Parse(args)));
+                bots.Add(new Bot(i, seed, "bots", LinkSimulationArgs.Parse(args), gatherer: i < count * gatherers));
             }
 
             using var cancel = new CancellationTokenSource();
@@ -106,8 +108,8 @@ namespace Kindling.Bots
                     double inKBps = connected.Count > 0 ? connected.Average(b => b.Session.Stats.BytesInPerSecond) / 1024.0 : 0;
                     double remotes = connected.Count > 0 ? connected.Average(b => b.Session.Stats.RemotePlayers) : 0;
                     Console.WriteLine(string.Format(CultureInfo.InvariantCulture,
-                        "[bots] t={0:0}s connected={1}/{2} rtt={3:0}ms in/bot={4:0.0}KB/s sees={5:0.0} corrections={6}",
-                        now, connected.Count, count, rtt, inKBps, remotes, bots.Sum(b => b.SteadyCorrections)));
+                        "[bots] t={0:0}s connected={1}/{2} rtt={3:0}ms in/bot={4:0.0}KB/s sees={5:0.0} corrections={6} wood={7} campfires={8}",
+                        now, connected.Count, count, rtt, inKBps, remotes, bots.Sum(b => b.SteadyCorrections), bots.Sum(b => b.WoodGathered), bots.Count(b => b.PlacedCampfire)));
                 }
 
                 return now < end;
@@ -153,6 +155,11 @@ namespace Kindling.Bots
                 AverageWireDownKBpsPerBot = connected.Count > 0 ? Math.Round(connected.Average(b => b.Transport.Counters.WireBytesReceived / Math.Max(1, b.ConnectedSeconds)) / 1024.0, 2) : 0,
                 AverageRemotePlayersSeen = connected.Count > 0 ? Math.Round(connected.Average(b => b.Session.Stats.RemotePlayers), 1) : 0,
                 AverageServerInputBuffer = connected.Count > 0 ? Math.Round(connected.Average(b => b.Session.Stats.ServerInputBuffer), 2) : 0,
+                WoodGathered = connected.Sum(b => b.WoodGathered),
+                CampfiresPlaced = bots.Count(b => b.PlacedCampfire),
+                ActionsSent = bots.Sum(b => b.ActionsSent),
+                Respawns = bots.Sum(b => b.Deaths),
+                AverageLoadedChunks = connected.Count > 0 ? Math.Round(connected.Average(b => b.Session.WorldState.LoadedChunkCount), 1) : 0,
             };
         }
 
@@ -173,6 +180,11 @@ namespace Kindling.Bots
             public double AverageRemotePlayersSeen { get; set; }
             public double AverageServerInputBuffer { get; set; }
             public double BotProcessCpuPercent { get; set; }
+            public int WoodGathered { get; set; }
+            public int CampfiresPlaced { get; set; }
+            public int ActionsSent { get; set; }
+            public int Respawns { get; set; }
+            public double AverageLoadedChunks { get; set; }
             public int ProcessorCount { get; set; }
         }
     }

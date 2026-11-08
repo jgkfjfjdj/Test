@@ -83,8 +83,8 @@ namespace Kindling.Net.Server
             m_Authenticator = authenticator;
             m_Dt = 1f / m_Config.TickRate;
             MapDataMessage.Write(m_MapWriter, world.Map.Static);
-            m_NextSave = m_Config.SaveIntervalSeconds;
-            m_NextCheckpoint = m_Config.CheckpointIntervalSeconds;
+            m_NextSave = world.Now + m_Config.SaveIntervalSeconds;
+            m_NextCheckpoint = world.Now + m_Config.CheckpointIntervalSeconds;
         }
 
         /// <summary>A fresh, unsaved world for this config's map seed (tests, offline play).</summary>

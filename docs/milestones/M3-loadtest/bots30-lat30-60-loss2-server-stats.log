@@ -1,0 +1,14 @@
+[stats] t=5s players=30 conns=30 tick avg=0.51ms max=29.25ms world=0.02ms cpu=15% out=5494kbit/s in=304kbit/s snapshots=62.9KB/s starved=169 dropped=0 oversize=0 entities=90 actions=30 saves=0
+[stats] t=10s players=30 conns=30 tick avg=0.42ms max=2.81ms world=0.04ms cpu=7% out=1846kbit/s in=714kbit/s snapshots=159.2KB/s starved=170 dropped=0 oversize=0 entities=90 actions=30 saves=1
+[stats] t=15s players=30 conns=30 tick avg=0.25ms max=1.02ms world=0.05ms cpu=7% out=1378kbit/s in=228kbit/s snapshots=161.9KB/s starved=171 dropped=0 oversize=0 entities=90 actions=30 saves=1
+[stats] t=20s players=30 conns=30 tick avg=0.24ms max=1.02ms world=0.02ms cpu=7% out=1404kbit/s in=229kbit/s snapshots=164.8KB/s starved=171 dropped=0 oversize=0 entities=90 actions=30 saves=2
+[stats] t=25s players=30 conns=30 tick avg=0.28ms max=2.17ms world=0.04ms cpu=8% out=1420kbit/s in=231kbit/s snapshots=165.8KB/s starved=171 dropped=0 oversize=0 entities=90 actions=40 saves=2
+[stats] t=30s players=30 conns=30 tick avg=0.31ms max=1.68ms world=0.07ms cpu=8% out=1425kbit/s in=234kbit/s snapshots=164.8KB/s starved=171 dropped=0 oversize=0 entities=97 actions=52 saves=3
+[stats] t=35s players=30 conns=30 tick avg=0.24ms max=0.41ms world=0.03ms cpu=6% out=1414kbit/s in=231kbit/s snapshots=165.2KB/s starved=171 dropped=0 oversize=0 entities=101 actions=59 saves=3
+[stats] t=40s players=30 conns=30 tick avg=0.28ms max=0.49ms world=0.05ms cpu=6% out=1404kbit/s in=228kbit/s snapshots=164.7KB/s starved=172 dropped=0 oversize=0 entities=102 actions=60 saves=4
+[stats] t=45s players=30 conns=30 tick avg=0.27ms max=0.51ms world=0.05ms cpu=7% out=1385kbit/s in=229kbit/s snapshots=162.1KB/s starved=172 dropped=0 oversize=0 entities=102 actions=60 saves=4
+[stats] t=50s players=30 conns=30 tick avg=0.31ms max=0.70ms world=0.08ms cpu=7% out=1398kbit/s in=227kbit/s snapshots=164.2KB/s starved=172 dropped=0 oversize=0 entities=102 actions=60 saves=5
+[stats] t=55s players=30 conns=30 tick avg=0.30ms max=0.77ms world=0.06ms cpu=7% out=1396kbit/s in=229kbit/s snapshots=163.7KB/s starved=172 dropped=0 oversize=0 entities=102 actions=60 saves=5
+[stats] t=60s players=30 conns=30 tick avg=0.26ms max=0.65ms world=0.03ms cpu=7% out=1363kbit/s in=228kbit/s snapshots=160.1KB/s starved=172 dropped=0 oversize=0 entities=102 actions=60 saves=6
+[stats] t=65s players=1 conns=1 tick avg=0.09ms max=2.45ms world=0.00ms cpu=7% out=970kbit/s in=160kbit/s snapshots=110.8KB/s starved=215 dropped=0 oversize=0 entities=131 actions=60 saves=6
+[stats] t=70s players=1 conns=1 tick avg=0.08ms max=0.54ms world=0.00ms cpu=4% out=21kbit/s in=0kbit/s snapshots=1.6KB/s starved=365 dropped=0 oversize=0 entities=131 actions=60 saves=7

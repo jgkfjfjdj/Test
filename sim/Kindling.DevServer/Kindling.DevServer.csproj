@@ -11,5 +11,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Kindling.Tools/Kindling.Tools.csproj" />
+    <ProjectReference Include="../Kindling.Server/Kindling.Server.csproj" />
   </ItemGroup>
 </Project>

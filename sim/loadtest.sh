@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Real-UDP load test on one machine: dev server + N bots, with optional simulated latency/loss.
+# Real-UDP load test on one machine: dev server (SQLite world, saves every 10 s) + N bots (half wander,
+# half gather/craft/eat), with optional simulated latency/loss.
 # Usage: sim/loadtest.sh <bots> <seconds> [latency a-b] [loss %] [output dir]
 # Example: sim/loadtest.sh 50 60 30-60 2 /tmp/load
 set -euo pipefail
@@ -28,6 +29,7 @@ NAME="bots${BOTS}${LATENCY:+-lat$LATENCY}${LOSS:+-loss$LOSS}"
 SERVER_SECONDS=$((SECONDS_TO_RUN + BOTS / 10 + 10))
 dotnet Kindling.DevServer/bin/Release/net8.0/Kindling.DevServer.dll --port "$PORT" --max-players $((BOTS + 10)) \
   --duration "$SERVER_SECONDS" --stats-interval 5 --stats-json "$OUT/$NAME-server.json" "${SIM_ARGS[@]}" \
+  --world "$OUT/$NAME-world.db" --wipe --save-interval 10 \
   > "$OUT/$NAME-server.log" 2>&1 &
 SERVER_PID=$!
 sleep 2
