@@ -13,6 +13,16 @@ namespace Kindling.Controls
 
         /// <summary>Opens the pause menu (no simulation input).</summary>
         Menu,
+
+        /// <summary>Opens the inventory and crafting screen.</summary>
+        Bag,
+
+        Hotbar1,
+        Hotbar2,
+        Hotbar3,
+        Hotbar4,
+        Hotbar5,
+        Hotbar6,
     }
 
     public enum ButtonBehavior : byte

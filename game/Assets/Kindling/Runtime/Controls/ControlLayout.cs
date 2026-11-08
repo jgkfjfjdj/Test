@@ -55,6 +55,19 @@ namespace Kindling.Controls
                 new TouchButton(ControlButton.Menu, new ScreenRect(right - 52f, safeArea.YMax - margin - 52f, 52f, 52f), ButtonBehavior.Momentary, InputButtons.None),
             };
 
+            // Hotbar along the top center, the bag button beside it.
+            const float slot = 48f;
+            const float gap = 6f;
+            float hotbarWidth = 6 * slot + 5 * gap;
+            float hotbarX = safeArea.X + (safeArea.Width - hotbarWidth) / 2f;
+            float hotbarY = safeArea.YMax - margin - slot;
+            for (int i = 0; i < 6; i++)
+            {
+                buttons.Add(new TouchButton((ControlButton)((int)ControlButton.Hotbar1 + i), new ScreenRect(hotbarX + i * (slot + gap), hotbarY, slot, slot), ButtonBehavior.Momentary, InputButtons.None));
+            }
+
+            buttons.Add(new TouchButton(ControlButton.Bag, new ScreenRect(hotbarX + hotbarWidth + 12f, hotbarY, slot, slot), ButtonBehavior.Momentary, InputButtons.None));
+
             var movementZone = new ScreenRect(safeArea.X, safeArea.Y, safeArea.Width * 0.4f, safeArea.Height * 0.75f);
             var joystickHome = new Vector2(safeArea.X + margin + small + 24f + settings.JoystickRadius, bottom + settings.JoystickRadius + 24f);
             return new ControlLayout(screenSize, safeArea, movementZone, joystickHome, buttons);

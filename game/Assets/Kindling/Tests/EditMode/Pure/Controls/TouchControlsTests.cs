@@ -206,6 +206,25 @@ namespace Kindling.Tests.Pure.Controls
         }
 
         [Test]
+        public void HotbarAndBagButtonsAreTappableWithoutTurningTheCamera()
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                Vector2 c = Center((ControlButton)((int)ControlButton.Hotbar1 + i));
+                ControlFrame f = Frame(T(1, c.X, c.Y, TouchPhase.Began));
+                Frame(T(1, c.X + 40, c.Y, TouchPhase.Moved));
+                Frame(T(1, c.X + 40, c.Y, TouchPhase.Ended));
+                Assert.That(m_Router.Layout.Find((ControlButton)((int)ControlButton.Hotbar1 + i)).PressCount, Is.EqualTo(1));
+                Assert.That(f.Pressed, Is.EqualTo(InputButtons.None));
+            }
+
+            Assert.That(m_Router.Look.Yaw, Is.EqualTo(0f), "slot drags never look around");
+            Vector2 bag = Center(ControlButton.Bag);
+            Frame(T(2, bag.X, bag.Y, TouchPhase.Began));
+            Assert.That(m_Router.Layout.Find(ControlButton.Bag).PressCount, Is.EqualTo(1));
+        }
+
+        [Test]
         public void FixedJoystickStaysAtItsHome()
         {
             m_Settings.FloatingJoystick = false;

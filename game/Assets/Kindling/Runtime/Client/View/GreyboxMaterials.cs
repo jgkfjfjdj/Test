@@ -14,6 +14,7 @@ namespace Kindling.Client.View
         static readonly System.Type[] s_KeepComponents = { typeof(MeshFilter), typeof(MeshRenderer), typeof(BoxCollider), typeof(CapsuleCollider), typeof(SphereCollider) };
 
         readonly Dictionary<GreyboxKind, Material> m_ByKind = new Dictionary<GreyboxKind, Material>();
+        readonly Dictionary<Color, Material> m_ByColor = new Dictionary<Color, Material>();
         readonly Material m_Template;
         Texture2D m_Checker;
 
@@ -37,6 +38,18 @@ namespace Kindling.Client.View
         public Material RemoteAway { get; }
 
         public Material Visor { get; }
+
+        /// <summary>A plain material of one color (shared per color).</summary>
+        public Material Solid(Color color)
+        {
+            if (!m_ByColor.TryGetValue(color, out Material material))
+            {
+                material = Make(color, tiling: 0f);
+                m_ByColor[color] = material;
+            }
+
+            return material;
+        }
 
         public Material For(GreyboxKind kind)
         {

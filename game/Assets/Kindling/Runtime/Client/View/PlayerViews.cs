@@ -64,10 +64,12 @@ namespace Kindling.Client.View
                 }
 
                 bool remoteCrouched = (remote.Flags & EntityFlags.Crouched) != 0;
+                bool downed = (remote.Flags & EntityFlags.Downed) != 0;
                 float height = remoteCrouched ? CrouchVisualHeight : StandingVisualHeight;
                 avatar.Root.transform.SetPositionAndRotation(remote.Position.ToUnity(), Quaternion.Euler(0f, remote.Yaw, 0f));
                 avatar.Body.localScale = new Vector3(0.6f, height * 0.5f, 0.6f);
-                avatar.Body.localPosition = new Vector3(0f, height * 0.5f, 0f);
+                avatar.Body.localPosition = downed ? new Vector3(0f, 0.3f, 0f) : new Vector3(0f, height * 0.5f, 0f);
+                avatar.Body.localRotation = downed ? Quaternion.Euler(90f, 0f, 0f) : Quaternion.identity;
 
                 bool away = (remote.Flags & EntityFlags.Away) != 0;
                 if (away != avatar.Away)

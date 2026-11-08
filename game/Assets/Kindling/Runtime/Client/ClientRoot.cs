@@ -1,25 +1,34 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using Kindling.Client.Input;
 using Kindling.Client.View;
+using Kindling.Content;
 using Kindling.Controls;
 using Kindling.Core.Diagnostics;
+using Kindling.Gameplay.Content;
 using Kindling.Net.Client;
 using Kindling.Net.Protocol;
 using Kindling.Net.Transport;
+using Kindling.Simulation;
+using Kindling.Simulation.Game;
+using Kindling.Simulation.Items;
+using Kindling.Simulation.Movement;
 using UnityEngine;
 using NVector2 = System.Numerics.Vector2;
+using NVector3 = System.Numerics.Vector3;
 
 namespace Kindling.Client
 {
     /// <summary>
-    /// The M1 client: a menu (join a server, play offline, host on Wi-Fi), then first-person movement
-    /// with touch controls (keyboard and mouse on desktop), prediction and remote players.
+    /// The client: a menu (join a server, play offline, host on Wi-Fi), then the survival game with touch
+    /// controls (keyboard and mouse on desktop), prediction, the world, inventory and crafting.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class ClientRoot : MonoBehaviour
     {
         const string LogCategory = "Client";
+        const float InteractReach = 3f;
 
         enum Mode
         {
@@ -31,12 +40,19 @@ namespace Kindling.Client
         readonly ControlSettings m_Controls = new ControlSettings();
         readonly GuiKit m_Kit = new GuiKit();
         readonly WorldView m_World = new WorldView();
+        readonly List<Hud.Toast> m_Toasts = new List<Hud.Toast>();
+        readonly List<GameEvent> m_Events = new List<GameEvent>();
+        readonly Dictionary<ControlButton, int> m_PressCounts = new Dictionary<ControlButton, int>();
+        ContentDatabase m_Content;
         TouchSource m_Touch;
         DesktopControls m_Desktop;
         TouchRouter m_Router;
         GreyboxMaterials m_Materials;
         PlayerViews m_Views;
+        EntityViews m_Entities;
         Hud m_Hud;
+        InventoryScreen m_Inventory;
+        LifeOverlay m_LifeOverlay;
 
         ClientSession m_Session;
         LocalServer m_LocalServer;
@@ -46,15 +62,29 @@ namespace Kindling.Client
         string m_AddressField;
         string m_LastHost;
         int m_LastPort;
-        int m_MenuPressCount;
         bool m_TouchMode;
         bool m_ShowSettings;
+        bool m_OverlayActive;
         string m_HostAddress;
+        string m_Prompt;
+        InteractTarget m_TargetKind;
+        uint m_TargetId;
+        uint m_AutoOpenedContainer;
         Vector2 m_LayoutScreen;
         Rect m_LayoutSafeArea;
 
         void Awake()
         {
+            try
+            {
+                m_Content = UnityContent.Database;
+            }
+            catch (ContentException e)
+            {
+                Log.Error(LogCategory, "Game content is broken.", e);
+                m_Status = "The game's content failed to load. Please reinstall or update.";
+            }
+
             ClientPrefs.Load(m_Controls);
             m_NameField = ClientPrefs.DisplayName;
             m_AddressField = ClientPrefs.Address;
@@ -62,7 +92,10 @@ namespace Kindling.Client
             m_Desktop = new DesktopControls();
             m_Materials = new GreyboxMaterials();
             m_Views = new PlayerViews(m_Materials);
+            m_Entities = new EntityViews(m_Materials);
             m_Hud = new Hud(m_Kit);
+            m_Inventory = new InventoryScreen(m_Kit);
+            m_LifeOverlay = new LifeOverlay(m_Kit);
             m_Router = new TouchRouter(BuildLayout(), m_Controls);
         }
 
@@ -100,17 +133,27 @@ namespace Kindling.Client
             {
                 string reason = DescribeDisconnect(m_Session.LastDisconnectCode, m_Session.LastDisconnectMessage);
                 Log.Info(LogCategory, $"Back to menu: {reason}");
-                bool canResume = m_Session.CanResume && m_LocalServer == null;
-                ReturnToMenu(reason, keepSession: canResume);
+                ReturnToMenu(reason, keepSession: m_Session.CanResume && m_LocalServer == null);
+            }
+
+            if (m_Mode == Mode.Playing)
+            {
+                CollectEvents();
             }
         }
 
         void LateUpdate()
         {
-            if (m_Mode == Mode.Playing && m_Session != null)
+            if (m_Mode != Mode.Playing || m_Session == null)
             {
-                m_Views.Sync(m_Session, m_Router.Look.Yaw, m_Router.Look.Pitch, Time.unscaledDeltaTime);
+                return;
             }
+
+            m_Views.Sync(m_Session, m_Router.Look.Yaw, m_Router.Look.Pitch, Time.unscaledDeltaTime);
+            m_Entities.Sync(m_Session.WorldState);
+            Camera cam = m_Views.Camera;
+            m_World.Sync(m_Session.WorldState.Nodes, cam != null ? cam.transform.position : Vector3.zero);
+            m_World.UpdateSky(cam, m_Session.WorldState.TimeOfDay, m_Session.WorldState.NightFraction);
         }
 
         void OnGUI()
@@ -121,7 +164,11 @@ namespace Kindling.Client
                 string hostInfo = m_LocalServer != null && m_LocalServer.IsUdp
                     ? $"Hosting on {m_HostAddress ?? "this device"}:{m_LocalServer.Config.Port} · {m_LocalServer.Server.Players.Count} player(s)"
                     : null;
-                if (m_Hud.Draw(m_Session, m_Router, m_Controls, m_Views, m_TouchMode, ClientPrefs.ShowStats, hostInfo))
+                m_Toasts.RemoveAll(t => t.Until < Time.unscaledTime);
+                bool leave = m_Hud.Draw(m_Session, m_Router, m_Controls, m_Views, m_Entities, m_TouchMode, ClientPrefs.ShowStats, hostInfo, m_OverlayActive ? null : m_Prompt, m_Toasts);
+                bool inventory = m_Inventory.Draw(m_Session);
+                bool life = !inventory && m_LifeOverlay.Draw(m_Session);
+                if (leave && !inventory && !life)
                 {
                     LeaveGame();
                 }
@@ -143,6 +190,7 @@ namespace Kindling.Client
             {
                 m_Router.ReleaseAll(Time.realtimeSinceStartupAsDouble);
                 m_Session.NotifyBackground(true);
+                m_LocalServer?.Save(); // iOS may kill a backgrounded app without warning
             }
             else if (m_Session.Status == ClientStatus.Connected)
             {
@@ -150,7 +198,6 @@ namespace Kindling.Client
             }
             else if (m_Session.CanResume && m_LastHost != null)
             {
-                // The connection timed out while suspended: take the same player back.
                 StartConnecting(m_LastHost, m_LastPort, "Reconnecting…");
             }
         }
@@ -162,6 +209,39 @@ namespace Kindling.Client
             if (LayoutChanged())
             {
                 m_Router.SetLayout(BuildLayout());
+                m_PressCounts.Clear();
+            }
+
+            ClientWorld w = m_Session.WorldState;
+            bool alive = w.Life == LifeState.Alive;
+            m_OverlayActive = m_Inventory.IsOpen || !alive;
+            UpdateLookTarget(w, alive);
+
+            if (w.OpenContainerId != 0 && w.OpenContainerId != m_AutoOpenedContainer && !m_Inventory.IsOpen)
+            {
+                m_AutoOpenedContainer = w.OpenContainerId;
+                m_Inventory.Open(); // looting: show the container
+            }
+            else if (w.OpenContainerId == 0)
+            {
+                m_AutoOpenedContainer = 0;
+            }
+
+            if (m_OverlayActive)
+            {
+                m_Router.ReleaseAll(Time.realtimeSinceStartupAsDouble);
+                if (!m_TouchMode)
+                {
+                    DesktopControls.SetCursorLocked(false);
+                    m_Desktop.ReadScreenKeys();
+                    if (m_Desktop.InventoryPressed && m_Inventory.IsOpen)
+                    {
+                        CloseInventory();
+                    }
+                }
+
+                m_Session.SetInput(NVector2.Zero, m_Router.Look.Yaw, m_Router.Look.Pitch, InputButtons.None);
+                return;
             }
 
             ControlFrame frame;
@@ -169,12 +249,28 @@ namespace Kindling.Client
             {
                 m_Router.Process(m_Touch.Read(1f / GuiKit.PixelsPerPoint), Time.realtimeSinceStartupAsDouble);
                 frame = m_Router.Consume();
-                TouchButton menu = m_Router.Layout.Find(ControlButton.Menu);
-                if (menu != null && menu.PressCount != m_MenuPressCount)
+                if (Pressed(ControlButton.Menu))
                 {
-                    m_MenuPressCount = menu.PressCount;
                     LeaveGame();
                     return;
+                }
+
+                if (Pressed(ControlButton.Bag))
+                {
+                    m_Inventory.Open();
+                }
+
+                if (Pressed(ControlButton.Interact))
+                {
+                    Interact();
+                }
+
+                for (int i = 0; i < CharacterInventory.HotbarSlots; i++)
+                {
+                    if (Pressed((ControlButton)((int)ControlButton.Hotbar1 + i)))
+                    {
+                        HotbarTap(i);
+                    }
                 }
             }
             else
@@ -185,10 +281,216 @@ namespace Kindling.Client
                     LeaveGame();
                     return;
                 }
+
+                if (m_Desktop.InventoryPressed)
+                {
+                    m_Inventory.Open();
+                }
+
+                if (m_Desktop.InteractPressed)
+                {
+                    Interact();
+                }
+
+                if (m_Desktop.HotbarKey >= 0)
+                {
+                    m_Session.SelectHotbar(w.Owner.ActiveSlot == m_Desktop.HotbarKey ? -1 : m_Desktop.HotbarKey);
+                }
+
+                if (m_Desktop.UsePressed && w.Owner.ActiveSlot >= 0)
+                {
+                    UseOrPlace(w.Owner.ActiveSlot);
+                }
             }
 
             m_Session.SetInput(frame.Move, frame.Yaw, frame.Pitch, frame.Held);
             m_Session.Press(frame.Pressed);
+        }
+
+        bool Pressed(ControlButton id)
+        {
+            TouchButton b = m_Router.Layout.Find(id);
+            if (b == null)
+            {
+                return false;
+            }
+
+            m_PressCounts.TryGetValue(id, out int seen);
+            m_PressCounts[id] = b.PressCount;
+            return b.PressCount != seen;
+        }
+
+        void UpdateLookTarget(ClientWorld w, bool alive)
+        {
+            m_Prompt = null;
+            m_TargetKind = InteractTarget.None;
+            if (alive && w.FindInteractTarget(m_Session.EyePosition, GameWorld.ViewDirection(m_Router.Look.Yaw, m_Router.Look.Pitch), InteractReach, out InteractTarget kind, out uint id))
+            {
+                m_TargetKind = kind;
+                m_TargetId = id;
+                m_Prompt = Describe(w, kind, id);
+            }
+
+            TouchButton interact = m_Router.Layout.Find(ControlButton.Interact);
+            if (interact != null)
+            {
+                interact.Visible = m_TargetKind != InteractTarget.None;
+            }
+        }
+
+        string Describe(ClientWorld w, InteractTarget kind, uint id)
+        {
+            switch (kind)
+            {
+                case InteractTarget.Pond:
+                    return "Drink";
+                case InteractTarget.Node:
+                    return "Pick " + w.Map.Nodes[(int)id].Def.Name;
+                case InteractTarget.Entity:
+                    if (!w.Entities.TryGetValue(id, out ChunkEntity e))
+                    {
+                        return null;
+                    }
+
+                    EntityDef def = w.DefOf(e);
+                    if (def.Kind == EntityKind.DroppedItem)
+                    {
+                        ItemDef item = m_Content.ByNetId<ItemDef>(e.ItemId);
+                        return item != null ? $"Pick up {item.Name} ×{e.ItemAmount}" : "Pick up";
+                    }
+
+                    return e.Label != null ? $"Open {def.Name} ({e.Label})" : "Open " + def.Name;
+                default:
+                    return null;
+            }
+        }
+
+        void Interact()
+        {
+            if (m_TargetKind != InteractTarget.None)
+            {
+                m_Session.Interact(m_TargetKind, m_TargetId);
+            }
+        }
+
+        void HotbarTap(int slot)
+        {
+            ClientWorld w = m_Session.WorldState;
+            if (w.Owner.ActiveSlot != slot)
+            {
+                m_Session.SelectHotbar(slot);
+                return;
+            }
+
+            ItemStack s = w.Inventory.Hotbar[slot];
+            if (s.IsEmpty || (s.Def.Deploys == null && s.Def.Consume == null && s.Def.Slot == EquipSlot.None))
+            {
+                m_Session.SelectHotbar(-1); // tap the selected tool again to put it away
+                return;
+            }
+
+            UseOrPlace(slot);
+        }
+
+        void UseOrPlace(int slot)
+        {
+            ItemStack s = m_Session.WorldState.Inventory.Hotbar[slot];
+            if (s.IsEmpty)
+            {
+                return;
+            }
+
+            if (s.Def.Deploys != null)
+            {
+                NVector3 forward = GameWorld.ViewDirection(m_Router.Look.Yaw, 0f);
+                m_Session.Deploy(slot, m_Session.PredictedState.Position + forward * 2.5f, m_Router.Look.Yaw + 180f);
+            }
+            else
+            {
+                m_Session.Use(ContainerRef.Hotbar, slot);
+            }
+        }
+
+        void CloseInventory()
+        {
+            m_Inventory.Close();
+            if (m_Session.WorldState.OpenContainerId != 0)
+            {
+                m_Session.CloseContainer();
+            }
+        }
+
+        void CollectEvents()
+        {
+            m_Events.Clear();
+            m_Session.WorldState.DrainEvents(m_Events);
+            foreach (GameEvent e in m_Events)
+            {
+                string text = null;
+                bool bad = false;
+                ItemDef item = e.ItemNetId != 0 ? m_Content.ByNetId<ItemDef>(e.ItemNetId) : null;
+                switch (e.Kind)
+                {
+                    case GameEventKind.ItemsGained:
+                        text = $"+{e.Amount} {item?.Name}";
+                        break;
+                    case GameEventKind.ToolBroke:
+                        text = $"Your {item?.Name} broke";
+                        bad = true;
+                        break;
+                    case GameEventKind.CraftFinished:
+                        text = $"Crafted {item?.Name}";
+                        break;
+                    case GameEventKind.GatherHit when e.Flag:
+                        text = "Sweet spot!";
+                        break;
+                    case GameEventKind.Notice:
+                        text = DescribeError((ActionError)e.Code);
+                        bad = true;
+                        break;
+                }
+
+                if (text != null)
+                {
+                    Toast(text, bad);
+                }
+            }
+        }
+
+        void OnActionCompleted(ushort requestId, ActionError error)
+        {
+            if (error != ActionError.None && error != ActionError.Cooldown)
+            {
+                Toast(DescribeError(error), true);
+            }
+        }
+
+        void Toast(string text, bool bad)
+        {
+            m_Toasts.Add(new Hud.Toast { Text = text, Bad = bad, Until = Time.unscaledTime + 3f });
+            if (m_Toasts.Count > 8)
+            {
+                m_Toasts.RemoveAt(0);
+            }
+        }
+
+        static string DescribeError(ActionError error)
+        {
+            switch (error)
+            {
+                case ActionError.NotPermitted: return "You need a better tool for that.";
+                case ActionError.NotEnoughItems: return "You don't have the materials.";
+                case ActionError.NotEnoughSpace: return "No room.";
+                case ActionError.StationMissing: return "You need to be at the right bench.";
+                case ActionError.QueueFull: return "Crafting queue is full.";
+                case ActionError.InvalidPlacement: return "Can't place that here.";
+                case ActionError.TooFar: return "Too far away.";
+                case ActionError.NoAccess: return "You can't use that.";
+                case ActionError.NotKnown: return "You don't know that recipe yet.";
+                case ActionError.Cooldown: return "Not yet.";
+                case ActionError.SlotRestricted: return "That doesn't go there.";
+                default: return error.ToString();
+            }
         }
 
         ControlLayout BuildLayout()
@@ -206,15 +508,18 @@ namespace Kindling.Client
 
         // ---------------------------------------------------------------- session lifecycle
 
+        ClientSession NewSession(IClientTransport transport)
+        {
+            var session = new ClientSession(transport, MakeSettings(), m_Content);
+            session.ActionCompleted += OnActionCompleted;
+            return session;
+        }
+
         void StartConnecting(string host, int port, string status)
         {
             m_LastHost = host;
             m_LastPort = port;
-            if (m_Session == null)
-            {
-                m_Session = new ClientSession(new LiteNetClientTransport(), MakeSettings());
-            }
-
+            m_Session ??= NewSession(new LiteNetClientTransport());
             m_Session.Connect(host, port);
             m_Mode = Mode.Connecting;
             m_Status = status;
@@ -237,24 +542,24 @@ namespace Kindling.Client
         {
             SaveMenuFields();
             EndSession();
-            m_LocalServer = LocalServer.CreateOffline();
+            m_LocalServer = LocalServer.CreateOffline(m_Content);
             if (m_LocalServer == null)
             {
-                m_Status = "Could not start the offline server.";
+                m_Status = "Could not start the offline world.";
                 return;
             }
 
-            m_Session = new ClientSession(m_LocalServer.CreateClientTransport(), MakeSettings());
+            m_Session = NewSession(m_LocalServer.CreateClientTransport());
             m_Session.Connect("offline", m_LocalServer.Config.Port);
             m_Mode = Mode.Connecting;
-            m_Status = "Starting offline game…";
+            m_Status = "Loading your offline world…";
         }
 
         void HostOnWifi()
         {
             SaveMenuFields();
             EndSession();
-            m_LocalServer = LocalServer.CreateUdp(NetProtocol.DefaultPort);
+            m_LocalServer = LocalServer.CreateUdp(m_Content, NetProtocol.DefaultPort);
             if (m_LocalServer == null)
             {
                 m_Status = $"Could not open UDP port {NetProtocol.DefaultPort} (is another server running?).";
@@ -269,33 +574,35 @@ namespace Kindling.Client
         {
             DisplayName = string.IsNullOrWhiteSpace(m_NameField) ? "Survivor" : m_NameField.Trim(),
             BuildVersion = Application.version,
+            AuthToken = ClientPrefs.DeviceIdentity,
         };
 
         void EnterPlay()
         {
             m_Mode = Mode.Playing;
             m_Status = string.Empty;
-            m_World.Build(m_Session.Layout, m_Materials);
+            m_World.Build(m_Session.Map, m_Materials);
             m_Router.SetLayout(BuildLayout());
-            m_MenuPressCount = m_Router.Layout.Find(ControlButton.Menu)?.PressCount ?? 0;
-            if (!m_Session.LastJoinWasResume)
+            m_PressCounts.Clear();
+            foreach (TouchButton b in m_Router.Layout.Buttons)
             {
-                m_Router.Look.Set(m_Session.PredictedState.Yaw, 0f);
+                m_PressCounts[b.Id] = b.PressCount;
             }
 
+            m_Router.Look.Set(m_Session.PredictedState.Yaw, 0f);
             Application.targetFrameRate = 60;
             if (!m_TouchMode)
             {
                 DesktopControls.SetCursorLocked(true);
             }
 
-            Log.Info(LogCategory, $"Playing as player {m_Session.PlayerId}{(m_Session.LastJoinWasResume ? " (resumed)" : string.Empty)}.");
+            Log.Info(LogCategory, $"Playing as player {m_Session.PlayerId}{(m_Session.LastJoinWasResume ? " (returning character)" : string.Empty)}.");
         }
 
         void LeaveGame()
         {
             EndSession();
-            ReturnToMenu("You left the game.", keepSession: false);
+            ReturnToMenu("You left the game. Your character stays in the world, asleep.", keepSession: false);
         }
 
         void ReturnToMenu(string status, bool keepSession)
@@ -303,6 +610,7 @@ namespace Kindling.Client
             m_Mode = Mode.Menu;
             m_Status = status;
             m_Views.Clear();
+            m_Entities.Clear();
             m_World.Hide();
             m_Router.ReleaseAll(Time.realtimeSinceStartupAsDouble);
             DesktopControls.SetCursorLocked(false);
@@ -317,13 +625,14 @@ namespace Kindling.Client
         {
             if (m_Session != null)
             {
+                m_Session.ActionCompleted -= OnActionCompleted;
                 m_Session.Dispose();
                 m_Session = null;
             }
 
             if (m_LocalServer != null)
             {
-                m_LocalServer.Dispose();
+                m_LocalServer.Dispose(); // saves the local world
                 m_LocalServer = null;
             }
         }
@@ -337,8 +646,15 @@ namespace Kindling.Client
             var area = new Rect(safe.x + (safe.width - width) / 2f, Screen.height - safe.yMax + m_Kit.Px(12), width, safe.height - m_Kit.Px(24));
             GUILayout.BeginArea(area);
             GUILayout.Label("KINDLING", m_Kit.Title);
-            GUILayout.Label($"Pre-alpha {Application.version} · movement test (M1)", m_Kit.SmallLabel);
+            GUILayout.Label($"Pre-alpha {Application.version} · survival test (M3)", m_Kit.SmallLabel);
             GUILayout.Space(m_Kit.Px(8));
+
+            if (m_Content == null)
+            {
+                GUILayout.Label(m_Status, m_Kit.Label);
+                GUILayout.EndArea();
+                return;
+            }
 
             if (m_Mode == Mode.Connecting)
             {
@@ -366,7 +682,7 @@ namespace Kindling.Client
             m_AddressField = GUILayout.TextField(m_AddressField ?? string.Empty, 64, m_Kit.TextField);
             GUILayout.Space(m_Kit.Px(6));
 
-            if (m_Session != null && m_Session.CanResume && m_LastHost != null && GUILayout.Button("Reconnect (keep my player)", m_Kit.Button))
+            if (m_Session != null && m_Session.CanResume && m_LastHost != null && GUILayout.Button("Reconnect", m_Kit.Button))
             {
                 StartConnecting(m_LastHost, m_LastPort, "Reconnecting…");
             }
@@ -401,7 +717,7 @@ namespace Kindling.Client
             }
 
             GUILayout.FlexibleSpace();
-            GUILayout.Label($"Technical test build: movement and networking only. {SystemInfo.deviceModel} · {SystemInfo.operatingSystem}", m_Kit.SmallLabel);
+            GUILayout.Label($"Technical test build: survival basics with greybox art. {SystemInfo.deviceModel} · {SystemInfo.operatingSystem}", m_Kit.SmallLabel);
             GUILayout.EndArea();
         }
 
@@ -468,7 +784,7 @@ namespace Kindling.Client
                 return int.TryParse(text.Substring(colon + 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out port) && port > 0 && port < 65536;
             }
 
-            host = text; // a hostname, IPv4, or a bare IPv6 address
+            host = text;
             return true;
         }
 
@@ -476,12 +792,13 @@ namespace Kindling.Client
         {
             switch (code)
             {
-                case DisconnectCode.Timeout: return "Connection lost. You can reconnect and keep your player for 2 minutes.";
+                case DisconnectCode.Timeout: return "Connection lost. Your character is asleep where you left; reconnect to wake up.";
                 case DisconnectCode.ConnectionFailed: return "Couldn't reach the server. Check the address and that you're on the same network.";
-                case DisconnectCode.ProtocolMismatch: return string.IsNullOrEmpty(message) ? "Your game version doesn't match the server." : message;
+                case DisconnectCode.ProtocolMismatch:
+                case DisconnectCode.ContentMismatch: return string.IsNullOrEmpty(message) ? "Your game version doesn't match the server." : message;
                 case DisconnectCode.ServerFull: return "The server is full.";
                 case DisconnectCode.AuthFailed: return "The server refused to let you join.";
-                case DisconnectCode.ServerShutdown: return "The server shut down.";
+                case DisconnectCode.ServerShutdown: return "The server shut down (the world was saved).";
                 case DisconnectCode.Kicked: return string.IsNullOrEmpty(message) ? "You were removed from the server." : message;
                 case DisconnectCode.Replaced: return "You joined from another device.";
                 case DisconnectCode.HandshakeTimeout: return "The server didn't answer in time.";

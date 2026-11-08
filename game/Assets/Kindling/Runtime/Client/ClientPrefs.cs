@@ -11,6 +11,7 @@ namespace Kindling.Client
         const string SensitivityKey = "kindling.lookSensitivity";
         const string InvertKey = "kindling.invertY";
         const string StatsKey = "kindling.showStats";
+        const string DeviceKey = "kindling.deviceIdentity";
 
         public static string DisplayName
         {
@@ -28,6 +29,26 @@ namespace Kindling.Client
         {
             get => PlayerPrefs.GetInt(StatsKey, 1) == 1;
             set => PlayerPrefs.SetInt(StatsKey, value ? 1 : 0);
+        }
+
+        /// <summary>
+        /// A random id made on first launch: dev servers save your character under it, so you get the same
+        /// character back. Replaced by real accounts and join tickets (M2 client work).
+        /// </summary>
+        public static string DeviceIdentity
+        {
+            get
+            {
+                string id = PlayerPrefs.GetString(DeviceKey, string.Empty);
+                if (id.Length == 0)
+                {
+                    id = System.Guid.NewGuid().ToString("N");
+                    PlayerPrefs.SetString(DeviceKey, id);
+                    PlayerPrefs.Save();
+                }
+
+                return id;
+            }
         }
 
         public static void Load(ControlSettings settings)

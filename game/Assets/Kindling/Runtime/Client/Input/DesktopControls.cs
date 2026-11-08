@@ -21,10 +21,31 @@ namespace Kindling.Client.Input
         /// <summary>Esc pressed this frame while the cursor was already free (i.e. "open the menu").</summary>
         public bool MenuRequested { get; private set; }
 
+        /// <summary>Hotbar slot chosen with 1–6 this frame, or -1.</summary>
+        public int HotbarKey { get; private set; } = -1;
+
+        /// <summary>F: use or place the selected hotbar item.</summary>
+        public bool UsePressed { get; private set; }
+
+        /// <summary>E: interact with what you look at.</summary>
+        public bool InteractPressed { get; private set; }
+
+        /// <summary>Tab or I: inventory.</summary>
+        public bool InventoryPressed { get; private set; }
+
+        /// <summary>Reads only the menu/inventory keys (while a screen is open).</summary>
+        public void ReadScreenKeys()
+        {
+            Keyboard keyboard = Keyboard.current;
+            InventoryPressed = keyboard != null && (keyboard.tabKey.wasPressedThisFrame || keyboard.iKey.wasPressedThisFrame || keyboard.escapeKey.wasPressedThisFrame);
+        }
+
         public ControlFrame Read(LookProcessor look, bool aiming)
         {
             var frame = new ControlFrame();
             MenuRequested = false;
+            HotbarKey = -1;
+            UsePressed = InteractPressed = InventoryPressed = false;
             Keyboard keyboard = Keyboard.current;
             Mouse mouse = Mouse.current;
             if (keyboard == null)
@@ -50,6 +71,19 @@ namespace Kindling.Client.Input
             {
                 SetCursorLocked(true);
             }
+
+            Key[] digits = { Key.Digit1, Key.Digit2, Key.Digit3, Key.Digit4, Key.Digit5, Key.Digit6 };
+            for (int i = 0; i < digits.Length; i++)
+            {
+                if (keyboard[digits[i]].wasPressedThisFrame)
+                {
+                    HotbarKey = i;
+                }
+            }
+
+            UsePressed = keyboard.fKey.wasPressedThisFrame;
+            InteractPressed = keyboard.eKey.wasPressedThisFrame;
+            InventoryPressed = keyboard.tabKey.wasPressedThisFrame || keyboard.iKey.wasPressedThisFrame;
 
             float x = (keyboard.dKey.isPressed ? 1f : 0f) - (keyboard.aKey.isPressed ? 1f : 0f);
             float y = (keyboard.wKey.isPressed ? 1f : 0f) - (keyboard.sKey.isPressed ? 1f : 0f);
