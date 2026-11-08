@@ -26,7 +26,11 @@ Unity doesn't offer license activation from a phone; any Windows, Mac or Linux c
 You don't need to install the Unity Editor.
 
 ## Step 2 — Add 3 secrets to GitHub (works in a phone browser)
-This repository → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**:
+Open **this repository's** page → **Settings** (the repository's own tab, not your profile settings) →
+**Secrets and variables** → **Actions** → **Secrets** tab → **New repository secret**.
+Direct link: `https://github.com/<owner>/<repo>/settings/secrets/actions`.
+
+Add each of these as its own secret (Name + Secret, then **Add secret**):
 
 | Secret | Value |
 |--------|-------|
@@ -35,6 +39,10 @@ This repository → **Settings** → **Secrets and variables** → **Actions** �
 | `UNITY_PASSWORD` | Your Unity account password |
 
 GitHub encrypts secrets; they never appear in logs.
+
+**Not seen by the build:** values on the *Variables* tab, *Codespaces* or *Dependabot* secrets (including
+the Codespaces secrets in your personal account settings), and secrets inside an *Environment*. When
+they're in the right place, the page lists them under **Repository secrets**.
 
 ## Step 3 — Build the .ipa
 **Actions** → **ios-unsigned** → **Run workflow** → version `0.1.0` → **Run**.
@@ -78,7 +86,7 @@ way; your offline world is kept (it's stored in the app's data).
 ## When something fails
 | Symptom | Likely cause |
 |---------|--------------|
-| Preflight: secret missing | Add it in step 2 (names are case-sensitive) |
+| Preflight: secret missing | It isn't a repository *Actions* secret. The run's summary says where else it looked (Variables tab, misspellings, Environments); see step 2 |
 | Unity step: license / activation error | `UNITY_LICENSE` isn't the full `.ulf` content, or the email/password don't match that license |
 | macOS step: compile error | Tell me — I'll read the log and fix the project |
 | "Unable to install" / "Untrusted developer" | Developer Mode is off, or trust your Apple ID under VPN & Device Management |
