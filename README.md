@@ -8,11 +8,13 @@ community-hosted servers, a backend platform and a web admin console.
 > Sign in with Apple, sessions, cloud saves, bootstrap/version gate, staff console API with TOTP +
 > RBAC + audit log, server registry, server link, server browser and join tickets — plus the
 > **staff web console** (`apps/web`, served at `/admin/`).
-> **M1 code complete, not yet on a device:** movement, collision, netcode (prediction,
-> reconciliation, interpolation, interest, resume), touch controls, dev server and bots are tested and
-> load-tested over UDP (100 bots); the Unity client/server glue compiles against Unity 6000.3 but
-> hasn't run yet: it needs the Unity license secret and a TestFlight build.
-> Status: [`M0`](docs/milestones/M0.md), [`M1`](docs/milestones/M1.md), [`M2`](docs/milestones/M2.md).
+> **M1 and M3 code complete, not yet on a device:** movement and netcode (prediction,
+> reconciliation, interpolation, interest), touch controls, and the survival core — gathering,
+> crafting, cooking, survival stats, death and respawn, deployables, loot, day/night and a persistent
+> world (SQLite) — are tested end to end and load-tested over UDP with 100 bots. The Unity client and
+> server compile against Unity 6000.3 but haven't run yet: that needs the Unity license secret and a
+> TestFlight build.
+> Status: [`M0`](docs/milestones/M0.md), [`M1`](docs/milestones/M1.md), [`M2`](docs/milestones/M2.md), [`M3`](docs/milestones/M3.md).
 
 ## Quick start (backend)
 
@@ -35,13 +37,14 @@ Unity project: see [`game/README.md`](game/README.md). Pure C# tests: `dotnet te
 ## Quick start (game server and bots, no Unity needed)
 
 ```bash
-dotnet run -c Release --project sim/Kindling.DevServer                       # UDP 27015
+dotnet run -c Release --project sim/Kindling.DevServer                       # UDP 27015, world in ./world/world.db
 dotnet run -c Release --project sim/Kindling.Bots -- --count 30 --duration 60
 sim/loadtest.sh 50 60 30-60 2                                                 # with simulated lag/loss
 tools/unity-compile-check/run.sh                                             # compile Unity code without Unity
+dotnet run --project sim/Kindling.ContentTool -- check                        # content valid, ids and export current
 ```
 
-Play-testing guide: [`docs/guides/playtest-m1.md`](docs/guides/playtest-m1.md). Protocol:
+Play-testing guide: [`docs/guides/playtest.md`](docs/guides/playtest.md). Protocol:
 [`docs/protocol/game-netcode.md`](docs/protocol/game-netcode.md).
 
 **iPhone build:** the `ios-testflight` workflow builds the app on GitHub (Unity on Linux → signed `.ipa`

@@ -80,6 +80,7 @@ M3–M9, which can run in parallel.
 **Exit criteria:** a 30-minute play session covering gather → craft tools → cook food → die → respawn
 at a bedroll; restart the server → the world, inventories and characters are restored exactly
 (automated persistence round-trip tests + a manual demo).
+→ Status: [M3.md](../milestones/M3.md) (content as JSON: ADR 0008; persistence: ADR 0009).
 
 ### M4 — Building and base ownership (6 weeks)
 **Deliverables**

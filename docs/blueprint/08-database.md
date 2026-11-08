@@ -457,6 +457,10 @@ means a short disruption, not lost data.
 
 ## 4. World save database (SQLite, per game server)
 
+> **Update (M3):** implemented with an adapted schema (versioned blobs instead of relational
+> containers/items, `resource_nodes` instead of per-chunk bitsets) — see
+> [ADR 0009](../adr/0009-persistent-world-model.md).
+
 ```sql
 CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 -- schema_version, world_id, map_id, seed, created_at, wipe_id, protocol_version, last_save_tick

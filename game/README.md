@@ -23,7 +23,7 @@ tiers). The iPhone build pipeline is described in [docs/guides/ios-testflight.md
 6. **Window → General → Test Runner → EditMode → Run All**. All tests should pass.
 7. Press **Play** in the Boot scene: the KINDLING menu appears. **Play offline** starts a local
    server; WASD + mouse to move (click to capture the cursor). See
-   [docs/guides/playtest-m1.md](../docs/guides/playtest-m1.md).
+   [docs/guides/playtest.md](../docs/guides/playtest.md).
 8. Optional build checks:
    - **Kindling → Build → Linux Dedicated Server** → `game/Builds/Server/Linux/`
    - **Kindling → Build → iOS Xcode Project** → `game/Builds/iOS/` → open in Xcode → run on your iPhone
@@ -43,11 +43,12 @@ If something fails, send me the full Console error text (or `~/Library/Logs/Unit
 |------|----------|-------|
 | `Assets/Kindling/Runtime/Core` | `Kindling.Core` | Pure C# (no UnityEngine): logging facade, tick clock, world grid/chunks, quantization |
 | `Assets/Kindling/Runtime/Content` | `Kindling.Content` | Pure C#: content keys (definitions arrive in M3) |
-| `Assets/Kindling/Runtime/Simulation` | `Kindling.Simulation` | Pure C#: collision world, character motor, greybox layout |
+| `Assets/Kindling/Runtime/Simulation` | `Kindling.Simulation` | Pure C#: collision, movement, items/inventory, world model, survival rules (`GameWorld`), persistence |
 | `Assets/Kindling/Runtime/Net` | `Kindling.Net` | Pure C#: protocol, transports (LiteNetLib, in-memory), `ServerHost`, `ClientSession` |
 | `Assets/Kindling/Runtime/Controls` | `Kindling.Controls` | Pure C#: touch router, joystick, look, buttons, layout |
 | `Assets/Kindling/Runtime/Gameplay` | `Kindling.Gameplay` | Unity runtime: Boot scene bootstrapper, dedicated server runner |
-| `Assets/Kindling/Runtime/Client` | `Kindling.Client` | Unity client (not in server builds): menu, HUD, camera, world and player views, input |
+| `Assets/Kindling/Runtime/Client` | `Kindling.Client` | Unity client (not in server builds): menu, HUD, inventory/crafting, camera, world/entity/player views, input |
+| `Assets/Kindling/Resources/Content` | (data) | Game content JSON + `content.lock.json` (ADR 0008); edit, then run `sim/Kindling.ContentTool update-lock` |
 | `Assets/ThirdParty/LiteNetLib` | `LiteNetLib` | Vendored UDP library (MIT), see `VERSION.md` |
 | `Assets/Kindling/Editor` | `Kindling.Editor` | Setup menu, build entry points |
 | `Assets/Kindling/Editor/Rendering` | `Kindling.Editor.Rendering` | URP tier assets (compiles only once URP is installed) |

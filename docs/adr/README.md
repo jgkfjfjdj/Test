@@ -12,3 +12,5 @@ consequences. Supersede a record by adding a new one; never edit an accepted dec
 | [0005](0005-integration-tests-real-services.md) | Integration tests run against real PostgreSQL/Redis services | Accepted 2026-11-07 |
 | [0006](0006-m2-identity-and-trust-decisions.md) | Identity, session and trust decisions (M2) | Accepted 2026-11-07 |
 | [0007](0007-netcode-litenetlib-own-simulation.md) | LiteNetLib transport + our own engine-independent simulation and netcode | Accepted 2026-11-08 |
+| [0008](0008-content-as-json-data.md) | Game content as JSON data with permanent network ids | Accepted 2026-11-08 |
+| [0009](0009-persistent-world-model.md) | Persistent world: save format, stores, server-sent map, sleeping characters | Accepted 2026-11-08 |
