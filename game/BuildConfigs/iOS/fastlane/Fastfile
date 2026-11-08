@@ -1,0 +1,93 @@
+# KINDLING iOS release lane.
+# Turns the Unity-exported Xcode project into an App Store-signed .ipa and uploads it to TestFlight.
+# Runs on GitHub's macOS runners (see .github/workflows/ios-testflight.yml); no local Mac required.
+#
+# Signing: fastlane match keeps one Apple Distribution certificate + App Store provisioning profile,
+# encrypted (MATCH_PASSWORD) in a private git repository you own (MATCH_GIT_URL). The first run creates
+# them through the App Store Connect API key; later runs reuse them.
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Sign and export the Unity Xcode project as an .ipa; upload to TestFlight when UPLOAD_TO_TESTFLIGHT=true"
+  lane :release do
+    project = ENV.fetch("XCODE_PROJECT")
+    bundle_id = ENV.fetch("IOS_BUNDLE_ID")
+    team_id = ENV.fetch("APPLE_TEAM_ID")
+    output_dir = ENV.fetch("OUTPUT_DIR", File.expand_path("../output", __dir__))
+
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      # Contents of the AuthKey_XXXX.p8 file, pasted as-is into the ASC_KEY_P8 secret.
+      key_content: ENV.fetch("ASC_KEY_P8"),
+      is_key_content_base64: false,
+      duration: 1200,
+      in_house: false
+    )
+
+    # Temporary keychain on CI machines.
+    setup_ci
+
+    match(
+      type: "appstore",
+      app_identifier: bundle_id,
+      team_id: team_id,
+      api_key: api_key,
+      git_url: ENV.fetch("MATCH_GIT_URL"),
+      git_basic_authorization: ENV.fetch("MATCH_GIT_BASIC_AUTHORIZATION"),
+      # Create the certificate/profile on the first run; reuse them afterwards.
+      readonly: false
+    )
+    profile = lane_context[SharedValues::MATCH_PROVISIONING_PROFILE_MAPPING].fetch(bundle_id)
+
+    # Unity's project: the app target needs the App Store profile; the embedded framework only an identity.
+    update_code_signing_settings(
+      path: project,
+      targets: ["Unity-iPhone"],
+      use_automatic_signing: false,
+      team_id: team_id,
+      bundle_identifier: bundle_id,
+      code_sign_identity: "Apple Distribution",
+      profile_name: profile,
+      build_configurations: ["Release"]
+    )
+    update_code_signing_settings(
+      path: project,
+      targets: ["UnityFramework"],
+      use_automatic_signing: false,
+      team_id: team_id,
+      code_sign_identity: "Apple Distribution",
+      profile_name: "",
+      build_configurations: ["Release"]
+    )
+
+    ipa = build_app(
+      project: project,
+      scheme: "Unity-iPhone",
+      configuration: "Release",
+      clean: true,
+      export_method: "app-store",
+      export_team_id: team_id,
+      export_options: {
+        signingStyle: "manual",
+        teamID: team_id,
+        provisioningProfiles: { bundle_id => profile }
+      },
+      include_symbols: true,
+      output_directory: output_dir,
+      output_name: "Kindling.ipa"
+    )
+    UI.success("Built #{ipa}")
+
+    if ENV["UPLOAD_TO_TESTFLIGHT"] == "true"
+      upload_to_testflight(
+        api_key: api_key,
+        ipa: ipa,
+        skip_waiting_for_build_processing: true,
+        changelog: ENV["TESTFLIGHT_CHANGELOG"]
+      )
+      UI.success("Uploaded to TestFlight. Apple processes the build for ~10-30 minutes before it appears in the TestFlight app.")
+    end
+  end
+end

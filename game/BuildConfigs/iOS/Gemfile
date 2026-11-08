@@ -1,0 +1,4 @@
+source "https://rubygems.org"
+
+# iOS signing, .ipa export and TestFlight upload (used by .github/workflows/ios-testflight.yml).
+gem "fastlane", "~> 2.240"

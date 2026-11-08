@@ -5,14 +5,19 @@ tooling only. Unity generates `ProjectSettings/`, `.meta` files and `Packages/pa
 the first time the project is opened. **Commit those generated files**: they pin the engine version
 and package versions for everyone (and for CI).
 
-## First open (one time, on your Mac)
+## Unity version and packages
 
-1. Install **Unity Hub** and the newest **Unity 6 LTS** editor with these modules:
+The project pins **Unity 6000.3.27f2** (`ProjectSettings/ProjectVersion.txt`) and exact package versions
+(`Packages/manifest.json`, taken from that editor's bundled manifest). CI builds the project without
+anyone opening it first: every CI build applies the project setup (player settings, Boot scene, URP
+tiers). The iPhone build pipeline is described in [docs/guides/ios-testflight.md](../docs/guides/ios-testflight.md).
+
+## First open in the editor (optional — for working on the game locally)
+
+1. Install **Unity Hub** and **Unity 6000.3.27f2** with these modules:
    iOS Build Support, Linux Dedicated Server Build Support (IL2CPP), Mac Build Support.
-2. Unity Hub → **Add → Add project from disk** → select this `game/` folder → open it with Unity 6 LTS.
-   (Hub may say the version is unknown — choose your Unity 6 LTS editor.)
-3. A dialog **"KINDLING project setup"** lists missing packages → **Install**.
-   If Unity asks to enable the new Input System backends, choose **Yes** (the editor restarts).
+2. Unity Hub → **Add → Add project from disk** → select this `game/` folder (Hub picks 6000.3.27f2 from `ProjectVersion.txt`).
+3. If Unity asks to enable the new Input System backends, choose **Yes** (the editor restarts).
 4. Menu **Kindling → Setup → 2. Configure Project** (iOS/server player settings, Boot scene).
 5. Menu **Kindling → Setup → 3. Create Render Pipeline Tiers** (Low/Medium/High URP assets).
 6. **Window → General → Test Runner → EditMode → Run All**. All tests should pass.
@@ -21,13 +26,12 @@ and package versions for everyone (and for CI).
    - **Kindling → Build → Linux Dedicated Server** → `game/Builds/Server/Linux/`
    - **Kindling → Build → iOS Xcode Project** → `game/Builds/iOS/` → open in Xcode → run on your iPhone
      (set your Team and bundle id in Xcode/Player Settings first).
-9. Commit the generated files:
+9. Commit what Unity generated (`.meta` files, `ProjectSettings/`, `Packages/packages-lock.json`):
    ```bash
    git add game/ProjectSettings game/Packages game/Assets
-   git commit -m "Unity: initial project settings and package lock"
+   git commit -m "Unity: generated project settings and meta files"
    git push
    ```
-   Then tell me which Unity version you used (it's in `ProjectSettings/ProjectVersion.txt`).
 
 If something fails, send me the full Console error text (or `~/Library/Logs/Unity/Editor.log`).
 

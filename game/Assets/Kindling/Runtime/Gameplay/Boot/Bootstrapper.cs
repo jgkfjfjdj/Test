@@ -57,6 +57,12 @@ namespace Kindling.Gameplay.Boot
                 // 30 FPS is the Low/Medium tier target; graphics tiers adjust this from M6 on.
                 Application.targetFrameRate = 30;
                 Screen.sleepTimeout = SleepTimeout.NeverSleep;
+#if !UNITY_SERVER
+                if (GetComponent<BootInfoOverlay>() == null)
+                {
+                    gameObject.AddComponent<BootInfoOverlay>();
+                }
+#endif
                 Log.Info(LogCategory,
                     $"KINDLING client {Application.version} (Unity {Application.unityVersion}) on {SystemInfo.deviceModel}, {SystemInfo.systemMemorySize} MB RAM");
             }

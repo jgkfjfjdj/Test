@@ -1,7 +1,9 @@
 using System;
 using System.IO;
 using System.Linq;
+using Kindling.Editor.Setup;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
@@ -9,7 +11,11 @@ namespace Kindling.Editor.Build
 {
     /// <summary>
     /// Build entry points for the editor menu and CI (GameCI / -executeMethod).
-    /// CI: -executeMethod Kindling.Editor.Build.KindlingBuild.CiBuildLinuxServer -customBuildPath &lt;path&gt;
+    /// CI iOS:    -executeMethod Kindling.Editor.Build.KindlingBuild.CiBuildIos
+    ///            -customBuildPath &lt;folder&gt; [-kindlingVersion 0.1.0] [-kindlingBuild 123]
+    ///            [-bundleId com.you.kindling] [-appleTeamId ABCDE12345]
+    /// CI server: -executeMethod Kindling.Editor.Build.KindlingBuild.CiBuildLinuxServer -customBuildPath &lt;path&gt;
+    /// CI builds start from a clean checkout, so they apply the project setup first (idempotent).
     /// </summary>
     public static class KindlingBuild
     {
@@ -57,6 +63,7 @@ namespace Kindling.Editor.Build
 
         public static void CiBuildLinuxServer()
         {
+            PrepareProjectForCi();
             string path = GetArgument("-customBuildPath") ?? Path.Combine("Builds/Server/Linux", ServerExecutableName);
             if (Directory.Exists(path) || path.EndsWith("/", StringComparison.Ordinal))
             {
@@ -68,8 +75,63 @@ namespace Kindling.Editor.Build
 
         public static void CiBuildIos()
         {
+            PrepareProjectForCi();
+            ApplyIosReleaseSettings(
+                version: GetArgument("-kindlingVersion"),
+                buildNumber: GetArgument("-kindlingBuild"),
+                bundleId: GetArgument("-bundleId"),
+                teamId: GetArgument("-appleTeamId"));
             string path = GetArgument("-customBuildPath") ?? "Builds/iOS";
+            Debug.Log($"[KINDLING] Exporting Xcode project to {path}");
             ExitWith(BuildIos(path, development: GetArgument("-development") != null));
+        }
+
+        /// <summary>Player settings + Boot scene + URP tier assets. Safe to run on every build.</summary>
+        static void PrepareProjectForCi()
+        {
+            string[] missing = KindlingPackageSetup.GetMissingPackages();
+            if (missing.Length > 0)
+            {
+                throw new InvalidOperationException("Packages missing from Packages/manifest.json: " + string.Join(", ", missing));
+            }
+
+            KindlingProjectConfigurator.ConfigureProject();
+            // Lives in the URP-only editor assembly, so it's invoked through its menu entry.
+            if (!EditorApplication.ExecuteMenuItem("Kindling/Setup/3. Create Render Pipeline Tiers"))
+            {
+                throw new InvalidOperationException("Render pipeline tier setup is unavailable (is URP installed?).");
+            }
+
+            AssetDatabase.SaveAssets();
+        }
+
+        /// <summary>Version, build number, bundle id and signing team for App Store builds.</summary>
+        static void ApplyIosReleaseSettings(string version, string buildNumber, string bundleId, string teamId)
+        {
+            if (!string.IsNullOrEmpty(version))
+            {
+                PlayerSettings.bundleVersion = version; // CFBundleShortVersionString
+            }
+
+            if (!string.IsNullOrEmpty(buildNumber))
+            {
+                PlayerSettings.iOS.buildNumber = buildNumber; // CFBundleVersion — must increase with every upload
+            }
+
+            if (!string.IsNullOrEmpty(bundleId))
+            {
+                PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS, bundleId);
+            }
+
+            if (!string.IsNullOrEmpty(teamId))
+            {
+                PlayerSettings.iOS.appleDeveloperTeamID = teamId;
+                // Signing is finalized by fastlane (match) on the macOS runner.
+                PlayerSettings.iOS.appleEnableAutomaticSigning = true;
+            }
+
+            Debug.Log($"[KINDLING] iOS {PlayerSettings.GetApplicationIdentifier(NamedBuildTarget.iOS)} " +
+                      $"{PlayerSettings.bundleVersion} ({PlayerSettings.iOS.buildNumber}) team {PlayerSettings.iOS.appleDeveloperTeamID}");
         }
 
         static string[] EnabledScenes()

@@ -93,7 +93,9 @@ namespace Kindling.Editor.Setup
                 boot.AddComponent<Bootstrapper>();
                 var camera = new GameObject("Main Camera");
                 camera.tag = "MainCamera";
-                camera.AddComponent<Camera>();
+                var cam = camera.AddComponent<Camera>();
+                cam.clearFlags = CameraClearFlags.SolidColor;
+                cam.backgroundColor = new Color(0.07f, 0.05f, 0.045f);
                 EditorSceneManager.SaveScene(scene, BootScenePath);
                 Debug.Log("[KINDLING] Created " + BootScenePath);
             }

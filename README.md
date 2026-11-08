@@ -4,7 +4,7 @@ An original first-person multiplayer survival game for iPhone: gather, craft, bu
 persistent worlds. The game comes with a full ecosystem around it: authoritative dedicated servers,
 community-hosted servers, a backend platform and a web admin console.
 
-> **Status:** M0 foundations done (Unity first-open pending). **M2 backend done**: accounts,
+> **Status:** M0 foundations done (Unity CI waits for a license secret). **M2 backend done**: accounts,
 > Sign in with Apple, sessions, cloud saves, bootstrap/version gate, staff console API with TOTP +
 > RBAC + audit log, server registry, server link, server browser and join tickets — plus the
 > **staff web console** (`apps/web`, served at `/admin/`).
@@ -28,6 +28,10 @@ API reference: [`docs/api/openapi.json`](docs/api/openapi.json). Protocols for g
 [`docs/protocol/`](docs/protocol/).
 
 Unity project: see [`game/README.md`](game/README.md). Pure C# tests: `dotnet test sim/Kindling.Sim.Tests`.
+
+**iPhone build:** the `ios-testflight` workflow builds the app on GitHub (Unity on Linux → signed `.ipa`
+on macOS → TestFlight) once your Apple and Unity accounts are connected —
+see [`docs/guides/ios-testflight.md`](docs/guides/ios-testflight.md).
 
 **Start here → [`docs/blueprint/README.md`](docs/blueprint/README.md)**
 
