@@ -24,6 +24,17 @@ namespace Kindling.Net.Server
         public long DroppedInputs;
         public long ProtocolErrors;
 
+        /// <summary>Time of the last GameWorld tick (survival, crafting, processors, loot) in ms.</summary>
+        public double LastWorldMs;
+
+        public long ChunkMessages;
+        public long OwnerMessages;
+        public long Actions;
+        public long Saves;
+
+        /// <summary>Time to capture the last save batch on the main thread (writing happens elsewhere).</summary>
+        public double LastSaveCaptureMs;
+
         public void ResetWindow() => MaxTickMs = 0;
     }
 }

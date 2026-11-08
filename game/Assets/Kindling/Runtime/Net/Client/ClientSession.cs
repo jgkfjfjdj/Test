@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Kindling.Content;
 using Kindling.Core.Diagnostics;
 using Kindling.Net.Protocol;
+using Kindling.Net.Server;
 using Kindling.Net.Transport;
+using Kindling.Simulation;
 using Kindling.Simulation.Collision;
+using Kindling.Simulation.Game;
 using Kindling.Simulation.Movement;
 using Kindling.Simulation.World;
 using Kindling.Core.Serialization;
@@ -32,7 +36,10 @@ namespace Kindling.Net.Client
 
         readonly IClientTransport m_Transport;
         readonly ClientSettings m_Settings;
-        readonly Func<int, GreyboxLayout> m_LayoutForSeed;
+        readonly ContentDatabase m_Content;
+        readonly Dictionary<ushort, ActionError> m_Results = new Dictionary<ushort, ActionError>();
+        StaticMap m_PendingMap;
+        ushort m_NextRequestId = 1;
         readonly MovementSettings m_Movement = new MovementSettings();
         readonly PacketWriter m_Writer = new PacketWriter(256);
         readonly List<int> m_Scratch = new List<int>();
@@ -45,7 +52,6 @@ namespace Kindling.Net.Client
         readonly List<ushort> m_RemoveScratch = new List<ushort>();
 
         CollisionWorld m_World;
-        int m_WorldSeed = int.MinValue;
         string m_Host;
         int m_Port;
         byte[] m_ResumeToken;
@@ -77,13 +83,22 @@ namespace Kindling.Net.Client
         long m_RateBytesIn;
         long m_RateBytesOut;
 
-        public ClientSession(IClientTransport transport, ClientSettings settings = null, Func<int, GreyboxLayout> layoutForSeed = null)
+        public ClientSession(IClientTransport transport, ClientSettings settings = null, ContentDatabase content = null)
         {
             m_Transport = transport ?? throw new ArgumentNullException(nameof(transport));
             m_Settings = settings ?? new ClientSettings();
-            m_LayoutForSeed = layoutForSeed ?? (seed => GreyboxLayout.Generate(seed));
+            m_Content = content ?? ContentDatabase.LoadDefault();
+            WorldState = new ClientWorld(m_Content);
             m_InterpolationTicks = m_Settings.MinInterpolationTicks;
         }
+
+        /// <summary>Raised when the server answers an action (request id, result).</summary>
+        public event Action<ushort, ActionError> ActionCompleted;
+
+        /// <summary>The client's copy of the survival world (inventory, chunks, own state).</summary>
+        public ClientWorld WorldState { get; }
+
+        public ContentDatabase Content => m_Content;
 
         public event Action<ClientStatus> StatusChanged;
 
@@ -97,7 +112,8 @@ namespace Kindling.Net.Client
 
         public int MapSeed { get; private set; }
 
-        public GreyboxLayout Layout { get; private set; }
+        /// <summary>The static map received from the server.</summary>
+        public StaticMap Map => WorldState.Map;
 
         public DisconnectCode LastDisconnectCode { get; private set; }
 
@@ -199,6 +215,7 @@ namespace Kindling.Net.Client
             }
 
             m_LocalTime += deltaSeconds;
+            WorldState.Advance(deltaSeconds);
             m_Transport.Poll(this);
 
             if (Status == ClientStatus.Handshaking && m_LocalTime - m_StatusSince > m_Settings.HandshakeTimeoutSeconds)
@@ -276,6 +293,76 @@ namespace Kindling.Net.Client
         /// <summary>Best estimate of the server's current tick.</summary>
         public double EstimatedServerTick => m_LocalTime * m_TickRate + m_TickOffset;
 
+        // ---------------------------------------------------------------- actions
+
+        /// <summary>The result of the most recent answered action.</summary>
+        public ActionError LastActionError { get; private set; }
+
+        /// <summary>Sends a player action; the answer arrives as <see cref="ActionCompleted"/> / <see cref="TryGetResult"/>.</summary>
+        public ushort Act(ActionRequest action)
+        {
+            if (Status != ClientStatus.Connected)
+            {
+                return 0;
+            }
+
+            action.RequestId = m_NextRequestId++;
+            if (m_NextRequestId == 0)
+            {
+                m_NextRequestId = 1;
+            }
+
+            m_Writer.Reset();
+            action.Write(m_Writer);
+            m_Transport.Send(m_Writer.Buffer, 0, m_Writer.Length, Delivery.ReliableOrdered);
+            m_Transport.Flush();
+            return action.RequestId;
+        }
+
+        /// <summary>The server's answer to a request, once it arrived (each answer can be taken once).</summary>
+        public bool TryGetResult(ushort requestId, out ActionError error)
+        {
+            if (m_Results.TryGetValue(requestId, out error))
+            {
+                m_Results.Remove(requestId);
+                return true;
+            }
+
+            return false;
+        }
+
+        public ushort MoveItem(ContainerRef from, int fromSlot, ContainerRef to, int toSlot, int amount) =>
+            Act(new ActionRequest { Kind = ActionKind.MoveItem, From = from, FromSlot = fromSlot, To = to, ToSlot = toSlot, Amount = amount });
+
+        public ushort QuickMove(ContainerRef from, int fromSlot, ContainerRef to) => MoveItem(from, fromSlot, to, -1, 0);
+
+        public ushort Drop(ContainerRef from, int slot, int amount) => Act(new ActionRequest { Kind = ActionKind.Drop, From = from, FromSlot = slot, Amount = amount });
+
+        public ushort Use(ContainerRef from, int slot) => Act(new ActionRequest { Kind = ActionKind.Use, From = from, FromSlot = slot });
+
+        public ushort SelectHotbar(int slot) => Act(new ActionRequest { Kind = ActionKind.SelectHotbar, FromSlot = slot });
+
+        public ushort Craft(RecipeDef recipe, int count = 1) => Act(new ActionRequest { Kind = ActionKind.Craft, Target = recipe.NetId, Amount = count });
+
+        public ushort CancelCraft(int jobId) => Act(new ActionRequest { Kind = ActionKind.CancelCraft, Target = (uint)jobId });
+
+        public ushort Deploy(int hotbarSlot, Vector3 position, float yaw) => Act(new ActionRequest { Kind = ActionKind.Deploy, FromSlot = hotbarSlot, Position = position, Yaw = yaw });
+
+        public ushort Interact(InteractTarget target, uint id) => Act(new ActionRequest { Kind = ActionKind.Interact, InteractTarget = target, Target = id });
+
+        public ushort CloseContainer() => Act(new ActionRequest { Kind = ActionKind.CloseContainer });
+
+        public ushort ToggleProcessor(uint entityId) => Act(new ActionRequest { Kind = ActionKind.ToggleProcessor, Target = entityId });
+
+        public ushort Respawn(uint bedrollId = 0) => Act(new ActionRequest { Kind = ActionKind.Respawn, Target = bedrollId });
+
+        public ushort GiveUp() => Act(new ActionRequest { Kind = ActionKind.GiveUp });
+
+        public ushort Revive(ushort playerId) => Act(new ActionRequest { Kind = ActionKind.Revive, Target = playerId });
+
+        /// <summary>Eye position of the predicted local player.</summary>
+        public Vector3 EyePosition => m_State.Position + new Vector3(0f, m_Movement.EyeHeightFor(m_State.Crouched), 0f);
+
         // ---------------------------------------------------------------- ticking
 
         void RunTick()
@@ -291,9 +378,24 @@ namespace Kindling.Net.Client
             };
             m_Latched = InputButtons.None;
             PlayerInput input = InputCodec.Quantize(raw);
+            LifeState life = WorldState.Life;
+            if (life == LifeState.Dead)
+            {
+                // The server doesn't move dead characters; keep sending inputs so sequence numbers flow.
+                m_PreviousState = m_State;
+                StoreAndSend(LifeRules.Restrict(input, life));
+                return;
+            }
+
+            input = LifeRules.Restrict(input, life);
 
             m_PreviousState = m_State;
             CharacterMotor.Simulate(ref m_State, input, m_Movement, m_World, m_Scratch, m_Dt);
+            StoreAndSend(input);
+        }
+
+        void StoreAndSend(PlayerInput input)
+        {
             int slot = (int)(m_Sequence % HistorySize);
             m_InputHistory[slot] = input;
             m_StateHistory[slot] = m_State;
@@ -389,6 +491,7 @@ namespace Kindling.Net.Client
                 DisplayName = m_Settings.DisplayName,
                 AuthToken = m_Settings.AuthToken,
                 ResumeToken = m_ResumeToken,
+                ContentFingerprint = m_Content.Fingerprint,
             }.Write(m_Writer);
             m_Transport.Send(m_Writer.Buffer, 0, m_Writer.Length, Delivery.ReliableOrdered);
             m_Transport.Flush();
@@ -420,8 +523,39 @@ namespace Kindling.Net.Client
                 var type = (MessageType)r.ReadByte();
                 switch (type)
                 {
+                    case MessageType.MapData when Status == ClientStatus.Handshaking:
+                        m_PendingMap = MapDataMessage.Read(ref r, m_Content);
+                        break;
                     case MessageType.Welcome when Status == ClientStatus.Handshaking:
                         HandleWelcome(WelcomeMessage.Read(ref r));
+                        break;
+                    case MessageType.WorldState when Status == ClientStatus.Connected:
+                        WorldState.ApplyWorldState(WorldStateMessage.Read(ref r));
+                        break;
+                    case MessageType.OwnerState when Status == ClientStatus.Connected:
+                        WorldState.ApplyOwner(ref r);
+                        break;
+                    case MessageType.Container when Status == ClientStatus.Connected:
+                        WorldState.ApplyContainer(ref r);
+                        break;
+                    case MessageType.Events when Status == ClientStatus.Connected:
+                        WorldState.ApplyEvents(ref r);
+                        break;
+                    case MessageType.ChunkSnapshot when Status == ClientStatus.Connected:
+                        WorldState.ApplySnapshot(ref r);
+                        break;
+                    case MessageType.ChunkDelta when Status == ClientStatus.Connected:
+                        WorldState.ApplyDelta(ref r);
+                        break;
+                    case MessageType.ChunkUnload when Status == ClientStatus.Connected:
+                        WorldState.Unload(ChunkMessages.ReadCoord(ref r));
+                        break;
+                    case MessageType.ActionResult when Status == ClientStatus.Connected:
+                        ushort requestId = r.ReadUShort();
+                        var error = (ActionError)r.ReadByte();
+                        m_Results[requestId] = error;
+                        LastActionError = error;
+                        ActionCompleted?.Invoke(requestId, error);
                         break;
                     case MessageType.Snapshot when Status == ClientStatus.Connected:
                         HandleSnapshot(ref r);
@@ -460,18 +594,17 @@ namespace Kindling.Net.Client
             m_Dt = 1f / welcome.TickRate;
             m_ResumeToken = welcome.ResumeToken;
             LastJoinWasResume = welcome.Resumed;
-            if (m_WorldSeed != welcome.MapSeed || m_World == null)
+            if (m_PendingMap == null)
             {
-                Layout = m_LayoutForSeed(welcome.MapSeed);
-                m_World = Layout.BuildCollisionWorld();
-                m_WorldSeed = welcome.MapSeed;
+                throw new ProtocolException("Welcome without map data.");
             }
 
-            if (!welcome.Resumed)
-            {
-                m_Remotes.Clear();
-                m_Names.Clear();
-            }
+            WorldState.SetMap(m_PendingMap);
+            m_World = WorldState.Collision;
+            m_PendingMap = null;
+            WorldState.Reset();
+            m_Remotes.Clear();
+            m_Names.Clear();
 
             m_Sequence = welcome.LastInputSequence;
             m_FirstSequence = m_Sequence;

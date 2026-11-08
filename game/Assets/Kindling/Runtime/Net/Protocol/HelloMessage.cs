@@ -15,6 +15,9 @@ namespace Kindling.Net.Protocol
         /// <summary>Token from an earlier Welcome, to take back the same player after a drop. Empty for a new join.</summary>
         public byte[] ResumeToken;
 
+        /// <summary>Fingerprint of the client's game content; must match the server's.</summary>
+        public string ContentFingerprint;
+
         public void Write(PacketWriter w)
         {
             w.WriteByte((byte)MessageType.Hello);
@@ -23,6 +26,7 @@ namespace Kindling.Net.Protocol
             w.WriteString(DisplayName, NetProtocol.MaxDisplayNameBytes);
             w.WriteString(AuthToken, NetProtocol.MaxAuthTokenBytes);
             w.WriteBlob(ResumeToken);
+            w.WriteString(ContentFingerprint ?? string.Empty, 32);
         }
 
         /// <summary>Reads the body (after the type byte). Only the version is read if it doesn't match ours.</summary>
@@ -38,6 +42,7 @@ namespace Kindling.Net.Protocol
             m.DisplayName = r.ReadString(NetProtocol.MaxDisplayNameBytes);
             m.AuthToken = r.ReadString(NetProtocol.MaxAuthTokenBytes);
             m.ResumeToken = r.ReadBlob(NetProtocol.ResumeTokenLength);
+            m.ContentFingerprint = r.ReadString(32);
             return m;
         }
     }

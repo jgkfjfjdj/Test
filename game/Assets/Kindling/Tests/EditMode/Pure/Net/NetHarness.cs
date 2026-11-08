@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Kindling.Content;
 using Kindling.Net.Client;
 using Kindling.Net.Server;
 using Kindling.Net.Transport;
 using Kindling.Simulation.Collision;
+using Kindling.Simulation.Game;
+using Kindling.Simulation.Persistence;
 
 namespace Kindling.Tests.Pure.Net
 {
@@ -15,19 +18,39 @@ namespace Kindling.Tests.Pure.Net
         public const double FrameDt = 1.0 / 120.0;
 
         public readonly InMemoryNetwork Network;
-        public readonly InMemoryServerTransport ServerTransport;
-        public readonly ServerHost Server;
+        public InMemoryServerTransport ServerTransport;
+        public ServerHost Server;
         public readonly List<ClientSession> Clients = new List<ClientSession>();
         public readonly List<InMemoryClientTransport> Transports = new List<InMemoryClientTransport>();
         double m_ServerAccumulator;
 
-        public NetHarness(ServerConfig config = null, ulong seed = 1)
+        public NetHarness(ServerConfig config = null, ulong seed = 1, GameConfig game = null, GameWorld world = null, WorldPersistence persistence = null)
         {
             Network = new InMemoryNetwork(seed);
-            ServerTransport = Network.CreateServer();
             config ??= new ServerConfig();
             config.Port = Port;
-            Server = new ServerHost(ServerTransport, config);
+            StartServer(config, world ?? ServerHost.CreateWorld(ContentDatabase.LoadDefault(), config, game), persistence);
+        }
+
+        public GameWorld World => Server.World;
+
+        /// <summary>
+        /// Stops the current server (it saves on shutdown if it has persistence), lets clients notice, then
+        /// starts a new one on the same port with the world <paramref name="load"/> returns.
+        /// </summary>
+        public void RestartServer(Func<(GameWorld World, WorldPersistence Persistence)> load)
+        {
+            ServerConfig config = Server.Config;
+            Server.Shutdown();
+            Run(0.5);
+            (GameWorld world, WorldPersistence persistence) = load();
+            StartServer(config, world, persistence);
+        }
+
+        void StartServer(ServerConfig config, GameWorld world, WorldPersistence persistence)
+        {
+            ServerTransport = Network.CreateServer();
+            Server = new ServerHost(ServerTransport, config, world, persistence);
             if (!Server.Start())
             {
                 throw new InvalidOperationException("Server did not start.");
@@ -40,6 +63,11 @@ namespace Kindling.Tests.Pure.Net
         {
             settings ??= new ClientSettings();
             settings.DisplayName = name;
+            if (string.IsNullOrEmpty(settings.AuthToken))
+            {
+                settings.AuthToken = "test-" + name;
+            }
+
             var transport = Network.CreateClient(conditions ?? NetworkConditions.Perfect);
             var session = new ClientSession(transport, settings);
             Clients.Add(session);
@@ -89,7 +117,7 @@ namespace Kindling.Tests.Pure.Net
         /// <summary>A spot near <paramref name="target"/> where a standing player fits.</summary>
         public Vector3 FreeSpotNear(Vector3 target)
         {
-            CollisionWorld world = Server.Layout.BuildCollisionWorld();
+            CollisionWorld world = Server.World.Collision;
             var scratch = new List<int>();
             for (int ring = 0; ring < 50; ring++)
             {

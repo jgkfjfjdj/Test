@@ -28,5 +28,17 @@ namespace Kindling.Net.Server
 
         /// <summary>Inputs buffered per player; extra ones (a client running fast) drop the oldest.</summary>
         public int InputQueueCapacity = 8;
+
+        /// <summary>Clients receive world entities for chunks within this many chunks (64 m each) of them…</summary>
+        public int ChunkSubscribeRadius = 3;
+
+        /// <summary>…and keep them until they are this far (hysteresis).</summary>
+        public int ChunkUnsubscribeRadius = 4;
+
+        /// <summary>Seconds between incremental world saves (when persistence is enabled).</summary>
+        public double SaveIntervalSeconds = 60;
+
+        /// <summary>Seconds between full checkpoints.</summary>
+        public double CheckpointIntervalSeconds = 1800;
     }
 }

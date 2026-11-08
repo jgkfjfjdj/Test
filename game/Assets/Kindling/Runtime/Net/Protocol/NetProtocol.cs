@@ -4,7 +4,7 @@ namespace Kindling.Net.Protocol
     public static class NetProtocol
     {
         /// <summary>Bumped on any incompatible wire change. Client and server must match exactly.</summary>
-        public const ushort Version = 1;
+        public const ushort Version = 2;
 
         /// <summary>Transport-level key: filters out stray UDP traffic before any message parsing.</summary>
         public const string ConnectionKey = "kindling-v1";
@@ -39,6 +39,18 @@ namespace Kindling.Net.Protocol
         PlayerInfo = 5,
         PlayerLeft = 6,
         Background = 7,
+
+        // Protocol 2 (survival):
+        MapData = 8,
+        WorldState = 9,
+        OwnerState = 10,
+        Container = 11,
+        Events = 12,
+        ChunkSnapshot = 13,
+        ChunkDelta = 14,
+        ChunkUnload = 15,
+        Action = 16,
+        ActionResult = 17,
     }
 
     /// <summary>Why a connection ended. Sent as the first byte of the transport's disconnect payload.</summary>
@@ -56,6 +68,9 @@ namespace Kindling.Net.Protocol
 
         /// <summary>The same player connected again (resumed) from another connection.</summary>
         Replaced = 9,
+
+        /// <summary>Client and server have different game content (items, recipes…): update the game.</summary>
+        ContentMismatch = 10,
 
         // Local-only codes (never sent): the transport reports these.
         Timeout = 100,

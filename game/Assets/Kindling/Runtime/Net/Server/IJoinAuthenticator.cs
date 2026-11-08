@@ -8,6 +8,7 @@ namespace Kindling.Net.Server
     /// </summary>
     public interface IJoinAuthenticator
     {
-        bool TryAuthenticate(in HelloMessage hello, out string displayName, out string reason);
+        /// <param name="accountId">Stable account id: the player's character is saved under it.</param>
+        bool TryAuthenticate(in HelloMessage hello, out string accountId, out string displayName, out string reason);
     }
 }

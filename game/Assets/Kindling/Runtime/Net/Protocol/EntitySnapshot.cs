@@ -15,6 +15,12 @@ namespace Kindling.Net.Protocol
 
         /// <summary>The player's app is in the background or their connection dropped (resume grace).</summary>
         Away = 8,
+
+        /// <summary>On the ground, waiting for a revive.</summary>
+        Downed = 16,
+
+        /// <summary>Swung a tool or weapon within the last few ticks (animation).</summary>
+        Swinging = 32,
     }
 
     /// <summary>
@@ -23,7 +29,7 @@ namespace Kindling.Net.Protocol
     /// </summary>
     public struct EntitySnapshot
     {
-        public const int MaxEncodedSize = 3 + 3 + 3 + 2 + 2 + 1 + 1;
+        public const int MaxEncodedSize = 3 + 3 + 3 + 2 + 2 + 1 + 1 + 3;
         const float CentimetresPerMetre = 100f;
         const float PitchScale = 127f / 90f;
 
@@ -32,6 +38,9 @@ namespace Kindling.Net.Protocol
         public float Yaw;
         public float Pitch;
         public EntityFlags Flags;
+
+        /// <summary>Content net id of the item in their hands (0 = none).</summary>
+        public ushort HeldItem;
 
         public void Write(PacketWriter w)
         {
@@ -42,6 +51,7 @@ namespace Kindling.Net.Protocol
             w.WriteUShort(InputCodec.EncodeYaw(Yaw));
             w.WriteSByte((sbyte)Math.Round(Math.Max(-90f, Math.Min(90f, Pitch)) * PitchScale));
             w.WriteByte((byte)Flags);
+            w.WriteVarUInt(HeldItem);
         }
 
         public static EntitySnapshot Read(ref PacketReader r)
@@ -62,6 +72,7 @@ namespace Kindling.Net.Protocol
                 Yaw = InputCodec.DecodeYaw(r.ReadUShort()),
                 Pitch = r.ReadSByte() / PitchScale,
                 Flags = (EntityFlags)r.ReadByte(),
+                HeldItem = (ushort)r.ReadVarUInt(),
             };
         }
 

@@ -6,6 +6,7 @@ using Kindling.Net.Client;
 using Kindling.Net.Protocol;
 using Kindling.Net.Server;
 using Kindling.Net.Transport;
+using Kindling.Simulation.Game;
 using Kindling.Simulation.Movement;
 using NUnit.Framework;
 using Kindling.Core.Serialization;
@@ -48,14 +49,17 @@ namespace Kindling.Tests.Pure.Net
         {
             var h = new NetHarness();
             ClientSession c = Join(h, "a", NetworkConditions.Of(latencyMs, jitterMs, loss));
+            h.Server.TeleportPlayer(c.PlayerId, h.FreeSpotNear(new Vector3(-60, 0, 40)));
             h.Run(1);
             int before = c.Stats.Corrections;
+            c.Stats.MaxCorrection = 0; // the setup teleport above was a (snapped) correction
+            Vector3 start = h.Server.FindPlayer(c.PlayerId).State.Position;
 
             Wander(h, c, 10);
             h.Run(2);
 
             ServerPlayer p = h.Server.FindPlayer(c.PlayerId);
-            Assert.That(Vector3.Distance(p.State.Position, h.Server.Layout.SpawnPoints[0]), Is.GreaterThan(10f), "actually moved (in curves)");
+            Assert.That(Vector3.Distance(p.State.Position, start), Is.GreaterThan(10f), "actually moved (in curves)");
             Assert.That(Vector3.Distance(p.State.Position, c.PredictedState.Position), Is.LessThan(0.01f), "settled on the server's position");
             Assert.That(c.Stats.Corrections - before, Is.LessThanOrEqualTo(3), "corrections while moving");
             Assert.That(c.Stats.MaxCorrection, Is.LessThan(0.5f));
@@ -83,6 +87,9 @@ namespace Kindling.Tests.Pure.Net
             var conditions = NetworkConditions.Of(60, 15, 0.02);
             ClientSession a = Join(h, "watcher", conditions);
             ClientSession b = Join(h, "walker", conditions);
+            Vector3 spot = h.FreeSpotNear(new Vector3(-80, 0, -60));
+            h.Server.TeleportPlayer(a.PlayerId, spot + new Vector3(3, 0, 0));
+            h.Server.TeleportPlayer(b.PlayerId, spot);
             h.Run(1);
             Assert.That(a.GetPlayerName(b.PlayerId), Is.EqualTo("walker"));
 
@@ -141,44 +148,39 @@ namespace Kindling.Tests.Pure.Net
         }
 
         [Test]
-        public void DroppedPlayersCanResumeWithinTheGracePeriodThenAreRemoved()
+        public void DroppedPlayersSleepInTheWorldAndWakeUpWhenTheyReturn()
         {
-            var h = new NetHarness(new ServerConfig { ResumeGraceSeconds = 15 });
+            var h = new NetHarness();
             ClientSession a = Join(h, "flaky", NetworkConditions.Of(40));
             ClientSession b = Join(h, "observer", NetworkConditions.Of(40));
+            Vector3 spot = h.FreeSpotNear(new Vector3(70, 0, -40));
+            h.Server.TeleportPlayer(a.PlayerId, spot);
+            h.Server.TeleportPlayer(b.PlayerId, spot + new Vector3(4, 0, 0));
             h.Run(0.5);
             h.Run(2, () => a.SetInput(Forward, 90f, 0f, InputButtons.None));
             a.SetInput(Vector2.Zero, 90f, 0f, InputButtons.None);
             h.Run(0.5);
             ushort id = a.PlayerId;
-            Vector3 position = h.Server.FindPlayer(id).State.Position;
+            Character character = h.Server.FindPlayer(id).Character;
+            Vector3 position = character.Motion.Position;
 
             h.Network.Sever(h.TransportOf(a));
             h.Run(6);
             Assert.That(a.Status, Is.EqualTo(ClientStatus.Disconnected));
             Assert.That(a.LastDisconnectCode, Is.EqualTo(DisconnectCode.Timeout));
-            Assert.That(a.CanResume, Is.True);
-            ServerPlayer waiting = h.Server.FindPlayer(id);
-            Assert.That(waiting, Is.Not.Null, "kept for the grace period");
-            Assert.That(waiting.Attached, Is.False);
-            var remotes = new List<RemotePlayer>();
-            b.GetRemotePlayers(remotes);
-            Assert.That(remotes.Single(r => r.Id == id).Flags & EntityFlags.Away, Is.EqualTo(EntityFlags.Away));
+            Assert.That(h.Server.FindPlayer(id), Is.Null, "no longer a connected player");
+            Assert.That(character.Online, Is.False);
+            Assert.That(b.GetPlayerName(id), Is.Null, "others got PlayerLeft");
+            Assert.That(b.WorldState.Entities.Values.Any(e => e.Id == character.SleeperEntityId && e.Label == "flaky"), Is.True, "others see the sleeper");
 
             a.Connect("sim", NetHarness.Port);
             h.RunUntil(() => a.Status == ClientStatus.Connected, 5);
-            Assert.That(a.LastJoinWasResume, Is.True);
-            Assert.That(a.PlayerId, Is.EqualTo(id));
+            Assert.That(a.LastJoinWasResume, Is.True, "same character came back");
+            Assert.That(h.Server.FindPlayer(a.PlayerId).Character, Is.SameAs(character));
             Assert.That(Vector3.Distance(a.PredictedState.Position, position), Is.LessThan(0.01f));
             h.Run(1, () => a.SetInput(Forward, 0f, 0f, InputButtons.None));
-            Assert.That(h.Server.FindPlayer(id).State.Position.Z, Is.GreaterThan(position.Z + 2f), "inputs flow again after resuming");
-
-            h.Network.Sever(h.TransportOf(a));
-            h.Run(15 + 6);
-            Assert.That(h.Server.FindPlayer(id), Is.Null, "removed after the grace period");
-            b.GetRemotePlayers(remotes);
-            Assert.That(remotes.Any(r => r.Id == id), Is.False);
-            Assert.That(b.GetPlayerName(id), Is.Null);
+            Assert.That(character.Motion.Position.Z, Is.GreaterThan(position.Z + 2f), "inputs flow again");
+            Assert.That(b.WorldState.Entities.Values.Any(e => e.Label == "flaky"), Is.False, "the sleeper is gone");
         }
 
         [Test]
@@ -288,6 +290,12 @@ namespace Kindling.Tests.Pure.Net
             }
 
             h.RunUntil(() => h.Clients.All(c => c.Status == ClientStatus.Connected), 5);
+            Vector3 crowd = h.FreeSpotNear(new Vector3(-30, 0, -70));
+            foreach (ClientSession c in h.Clients)
+            {
+                h.Server.TeleportPlayer(c.PlayerId, crowd);
+            }
+
             h.Run(1);
             var remotes = new List<RemotePlayer>();
             h.Clients[0].GetRemotePlayers(remotes);
@@ -363,7 +371,7 @@ namespace Kindling.Tests.Pure.Net
             {
                 ConnectOnly();
                 m_Writer.Reset();
-                new HelloMessage { ProtocolVersion = NetProtocol.Version, DisplayName = "raw" }.Write(m_Writer);
+                new HelloMessage { ProtocolVersion = NetProtocol.Version, DisplayName = "raw", AuthToken = "raw-" + System.Guid.NewGuid(), ContentFingerprint = Kindling.Content.ContentDatabase.LoadDefault().Fingerprint }.Write(m_Writer);
                 m_Transport.Send(m_Writer.Buffer, 0, m_Writer.Length, Delivery.ReliableOrdered);
                 Pump(() => m_Welcomed, 2);
                 Assert.That(m_Welcomed, Is.True);

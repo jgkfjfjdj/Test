@@ -281,6 +281,29 @@ namespace Kindling.Content
 
         public LootTableDef LootTable(string key) => Get<LootTableDef>(key);
 
+        string m_Fingerprint;
+
+        /// <summary>Short hash of the content catalogue (keys, net ids, names): client and server must match.</summary>
+        public string Fingerprint
+        {
+            get
+            {
+                if (m_Fingerprint == null)
+                {
+                    ulong h = 1469598103934665603UL;
+                    foreach (char ch in ContentExporter.Export(this))
+                    {
+                        h ^= ch;
+                        h *= 1099511628211UL;
+                    }
+
+                    m_Fingerprint = h.ToString("x16", System.Globalization.CultureInfo.InvariantCulture);
+                }
+
+                return m_Fingerprint;
+            }
+        }
+
         public ContentDef ByNetId(ushort id) => m_ByNetId.TryGetValue(id, out ContentDef d) ? d : null;
 
         public T ByNetId<T>(ushort id) where T : ContentDef => ByNetId(id) as T;

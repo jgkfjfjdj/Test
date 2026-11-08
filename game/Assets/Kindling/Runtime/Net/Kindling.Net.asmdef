@@ -3,6 +3,7 @@
     "rootNamespace": "Kindling.Net",
     "references": [
         "Kindling.Core",
+        "Kindling.Content",
         "Kindling.Simulation",
         "LiteNetLib"
     ],
