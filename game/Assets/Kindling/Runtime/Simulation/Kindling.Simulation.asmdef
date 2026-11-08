@@ -2,7 +2,8 @@
     "name": "Kindling.Simulation",
     "rootNamespace": "Kindling.Simulation",
     "references": [
-        "Kindling.Core"
+        "Kindling.Core",
+        "Kindling.Content"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
