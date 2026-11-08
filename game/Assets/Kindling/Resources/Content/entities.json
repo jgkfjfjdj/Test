@@ -13,7 +13,7 @@
     { "key": "entity.bedroll", "name": "Bedroll", "kind": "deployable", "size": [0.9, 0.2, 2], "respawnPoint": true, "respawnCooldownSeconds": 300 },
     { "key": "entity.loot_barrel", "name": "Barrel", "kind": "breakable", "size": [0.8, 1.1, 0.8], "health": 40, "loot": "loot.barrel", "refillSeconds": 600, "mapCount": 60 },
     { "key": "entity.loot_crate", "name": "Supply Crate", "kind": "lootContainer", "size": [1.2, 0.8, 0.8], "slots": 8, "loot": "loot.crate", "refillSeconds": 900, "mapCount": 30 },
-    { "key": "entity.dropped_item", "name": "Dropped Item", "kind": "droppedItem", "size": [0.4, 0.3, 0.4], "decaySeconds": 300 },
+    { "key": "entity.dropped_item", "name": "Dropped Item", "kind": "droppedItem", "size": [0.4, 0.3, 0.4], "slots": 1, "decaySeconds": 300 },
     { "key": "entity.body", "name": "Body", "kind": "body", "size": [0.6, 0.4, 1.8], "slots": 36, "decaySeconds": 600 },
     { "key": "entity.sleeper", "name": "Sleeper", "kind": "sleeper", "size": [0.6, 0.4, 1.8] }
   ]

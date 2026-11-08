@@ -9,7 +9,7 @@
     { "key": "item.resource.fiber", "name": "Plant Fiber", "category": "resource", "stack": 500, "weight": 0.02 },
     { "key": "item.resource.iron_ore", "name": "Iron Ore", "category": "resource", "stack": 500, "weight": 0.2 },
     { "key": "item.resource.iron_bar", "name": "Iron Bar", "category": "resource", "stack": 250, "weight": 0.25 },
-    { "key": "item.resource.charcoal", "name": "Charcoal", "category": "resource", "stack": 500, "weight": 0.02, "fuelSeconds": 6 },
+    { "key": "item.resource.charcoal", "name": "Charcoal", "category": "resource", "stack": 500, "weight": 0.02 },
     { "key": "item.resource.resin", "name": "Resin", "category": "resource", "stack": 100, "weight": 0.02 },
     { "key": "item.resource.salvage", "name": "Salvage", "category": "resource", "stack": 200, "weight": 0.1 },
 
