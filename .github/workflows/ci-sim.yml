@@ -42,6 +42,8 @@ jobs:
       - name: Content is valid, lock file and export are current
         run: dotnet run --project sim/Kindling.ContentTool --configuration Release -- check
       - run: dotnet test sim/Kindling.Sim.Tests --configuration Release --logger "console;verbosity=normal"
+      - name: Server tests (SQLite world store)
+        run: dotnet test sim/Kindling.Server.Tests --configuration Release --logger "console;verbosity=normal"
       - name: Build dev server and bots
         run: |
           dotnet build sim/Kindling.DevServer --configuration Release

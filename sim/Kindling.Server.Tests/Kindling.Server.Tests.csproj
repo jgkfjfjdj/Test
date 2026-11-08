@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Tests for .NET-only server code. Reuses the store contract tests from the Unity test folder. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(GameTests)/EditMode/Pure/Persistence/WorldStoreContract.cs" Link="Contract/WorldStoreContract.cs" />
+    <Compile Include="$(GameTests)/EditMode/Pure/Persistence/WorldComparer.cs" Link="Contract/WorldComparer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.14.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Kindling.Server/Kindling.Server.csproj" />
+  </ItemGroup>
+</Project>
